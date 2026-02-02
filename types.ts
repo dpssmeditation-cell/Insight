@@ -101,6 +101,7 @@ export interface Artist {
   featuredBook?: Book;
   featuredVideo?: Video;
   featuredArticle?: Article;
+  latestActivity?: string; // For sorting by newest
 }
 
 export interface ChatMessage {

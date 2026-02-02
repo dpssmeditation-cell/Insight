@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage Debugger - Insight Sharing</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #00ff00;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        .section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #00ff00;
+        }
+        .key {
+            color: #ffaa00;
+            font-weight: bold;
+        }
+        pre {
+            background: #000;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .danger {
+            background: #ff0000;
+            color: #fff;
+        }
+        .danger:hover {
+            background: #cc0000;
+        }
+        .info {
+            color: #00aaff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 LocalStorage Debugger - Insight Sharing</h1>
+    
+    <div class="section">
+        <h2>Quick Actions</h2>
+        <button onclick="loadData()">🔄 Refresh Data</button>
+        <button onclick="clearAll()" class="danger">🗑️ Clear All Data</button>
+        <button onclick="exportData()">💾 Export Data</button>
+    </div>
+
+    <div class="section">
+        <h2>📚 Books</h2>
+        <div id="books"></div>
+    </div>
+
+    <div class="section">
+        <h2>📰 Articles</h2>
+        <div id="articles"></div>
+    </div>
+
+    <div class="section">
+        <h2>🎵 Audios</h2>
+        <div id="audios"></div>
+    </div>
+
+    <div class="section">
+        <h2>🎬 Videos</h2>
+        <div id="videos"></div>
+    </div>
+
+    <div class="section">
+        <h2>🗑️ Deleted IDs</h2>
+        <div id="deleted"></div>
+    </div>
+
+    <div class="section">
+        <h2>📊 All LocalStorage Keys</h2>
+        <div id="allKeys"></div>
+    </div>
+
+    <script>
+        function loadData() {
+            // Books
+            const books = JSON.parse(localStorage.getItem('is_library_books') || '[]');
+            document.getElementById('books').innerHTML = `
+                <p class="info">Count: ${books.length}</p>
+                <pre>${JSON.stringify(books, null, 2)}</pre>
+            `;
+
+            // Articles
+            const articles = JSON.parse(localStorage.getItem('is_library_articles') || '[]');
+            document.getElementById('articles').innerHTML = `
+                <p class="info">Count: ${articles.length}</p>
+                <pre>${JSON.stringify(articles, null, 2)}</pre>
+            `;
+
+            // Audios
+            const audios = JSON.parse(localStorage.getItem('is_library_audios') || '[]');
+            document.getElementById('audios').innerHTML = `
+                <p class="info">Count: ${audios.length}</p>
+                <pre>${JSON.stringify(audios, null, 2)}</pre>
+            `;
+
+            // Videos
+            const videos = JSON.parse(localStorage.getItem('is_library_videos') || '[]');
+            document.getElementById('videos').innerHTML = `
+                <p class="info">Count: ${videos.length}</p>
+                <pre>${JSON.stringify(videos, null, 2)}</pre>
+            `;
+
+            // Deleted IDs
+            const deletedIds = JSON.parse(localStorage.getItem('is_deleted_default_ids') || '[]');
+            document.getElementById('deleted').innerHTML = `
+                <p class="info">Count: ${deletedIds.length}</p>
+                <pre>${JSON.stringify(deletedIds, null, 2)}</pre>
+            `;
+
+            // All keys
+            const allKeys = Object.keys(localStorage).filter(k => k.startsWith('is_'));
+            document.getElementById('allKeys').innerHTML = `
+                <p class="info">Total Keys: ${allKeys.length}</p>
+                <ul>
+                    ${allKeys.map(key => `<li class="key">${key}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function clearAll() {
+            if (confirm('⚠️ This will delete ALL data from localStorage. Are you sure?')) {
+                const keys = Object.keys(localStorage).filter(k => k.startsWith('is_'));
+                keys.forEach(key => localStorage.removeItem(key));
+                alert('✅ All data cleared! Refresh the page.');
+                loadData();
+            }
+        }
+
+        function exportData() {
+            const data = {
+                books: JSON.parse(localStorage.getItem('is_library_books') || '[]'),
+                articles: JSON.parse(localStorage.getItem('is_library_articles') || '[]'),
+                audios: JSON.parse(localStorage.getItem('is_library_audios') || '[]'),
+                videos: JSON.parse(localStorage.getItem('is_library_videos') || '[]'),
+                deletedIds: JSON.parse(localStorage.getItem('is_deleted_default_ids') || '[]')
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `insight-sharing-backup-${Date.now()}.json`;
+            a.click();
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>

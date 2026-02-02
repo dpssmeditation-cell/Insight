@@ -1,5 +1,5 @@
 import React from 'react';
-import { Artist, Language, Audio, Book, Video } from '../types';
+import { Artist, Language, Audio, Book, Video, Article } from '../types';
 import { UI_STRINGS } from '../constants';
 
 interface ArtistModalProps {
@@ -9,6 +9,7 @@ interface ArtistModalProps {
   onAudioClick: (audio: Audio) => void;
   onBookClick: (book: Book) => void;
   onVideoClick: (video: Video) => void;
+  onArticleClick: (article: Article) => void;
 }
 
 export const ArtistModal: React.FC<ArtistModalProps> = ({ 
@@ -17,7 +18,8 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
   language,
   onAudioClick,
   onBookClick,
-  onVideoClick
+  onVideoClick,
+  onArticleClick
 }) => {
   const t = UI_STRINGS[language];
   const isKhmer = language === 'kh';
@@ -46,7 +48,7 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
         onClick={onClose}
       />
       
-      <div className="relative bg-[#1a1a1a] text-slate-200 rounded-lg shadow-2xl w-full max-w-5xl overflow-hidden animate-fade-in-up border border-slate-700 flex flex-col max-h-[90vh]">
+      <div className="relative bg-[#1a1a1a] text-slate-200 rounded-lg shadow-2xl w-full max-w-6xl overflow-hidden animate-fade-in-up border border-slate-700 flex flex-col max-h-[90vh]">
         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-700 bg-[#111] shrink-0">
           <h2 className={`text-lg font-medium ${isKhmer ? 'khmer-text' : ''}`}>
             {getLocalizedRole()}
@@ -119,8 +121,8 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                   <div className="bg-[#111] py-3 text-center border-b border-slate-700 font-bold tracking-wide text-xs uppercase text-slate-400">
                       {t.mostPopular}
                   </div>
-                  <div className="grid grid-cols-3 divide-x divide-slate-700">
-                      <div className="flex flex-col">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-slate-700">
+                      <div className="flex flex-col border-b lg:border-b-0 border-slate-700">
                           <div className="bg-[#2a2a2a] py-2 text-center border-b border-slate-700 text-xs font-bold text-slate-500 uppercase">
                               {t.audio}
                           </div>
@@ -139,7 +141,7 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                           </div>
                       </div>
 
-                      <div className="flex flex-col">
+                      <div className="flex flex-col border-b lg:border-b-0 border-slate-700">
                           <div className="bg-[#2a2a2a] py-2 text-center border-b border-slate-700 text-xs font-bold text-slate-500 uppercase">
                               {t.books}
                           </div>
@@ -171,6 +173,25 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                                       </div>
                                       <p className="text-xs font-medium text-slate-200 line-clamp-1 group-hover:text-amber-500 transition-colors">
                                           {language === 'zh' ? artist.featuredVideo.titleZh : artist.featuredVideo.title}
+                                      </p>
+                                  </div>
+                              ) : <p className="text-slate-600 text-[10px] italic">{t.none}</p>}
+                          </div>
+                      </div>
+
+                      <div className="flex flex-col">
+                          <div className="bg-[#2a2a2a] py-2 text-center border-b border-slate-700 text-xs font-bold text-slate-500 uppercase">
+                              {t.articles}
+                          </div>
+                          <div className="p-4 flex flex-col items-center min-h-[160px] justify-center">
+                              {artist.featuredArticle ? (
+                                  <div className="cursor-pointer group text-center" onClick={() => onArticleClick(artist.featuredArticle!)}>
+                                      <div className="relative w-28 h-18 mb-3 rounded-sm overflow-hidden border border-slate-600 shadow-md transition-transform group-hover:scale-105 mx-auto">
+                                          <img src={artist.featuredArticle.imageUrl} className="w-full h-full object-cover" />
+                                          <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                                      </div>
+                                      <p className="text-xs font-medium text-slate-200 line-clamp-1 group-hover:text-amber-500 transition-colors">
+                                          {language === 'zh' ? artist.featuredArticle.titleZh : artist.featuredArticle.title}
                                       </p>
                                   </div>
                               ) : <p className="text-slate-600 text-[10px] italic">{t.none}</p>}

@@ -2,7 +2,30 @@
   "name": "insight-sharing",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "engines": {
     "node": "24.x"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "check-deploy": "node check-deployment.js",
+    "server": "json-server --watch db.json --port 3001"
+  },
+  "dependencies": {
+    "@google/genai": "^1.38.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.6",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "json-server": "1.0.0-beta.5",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11"
   }
 }

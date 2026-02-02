@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Article, Language } from '../types';
 import { UI_STRINGS } from '../constants';
@@ -60,7 +61,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
   const content = getLocalizedContent();
 
   return (
-    <div className="fixed inset-0 z-[700] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
       <div 
         className="absolute inset-0 bg-slate-900/90 backdrop-blur-md animate-fade-in" 
         onClick={onClose}

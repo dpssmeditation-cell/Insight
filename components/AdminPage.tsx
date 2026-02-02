@@ -15,9 +15,9 @@ interface AdminPageProps {
 /**
  * A sophisticated Rich Text Editor component that mimics Word/Google Docs.
  */
-const RichTextEditor: React.FC<{ 
-  value: string; 
-  onChange: (val: string) => void; 
+const RichTextEditor: React.FC<{
+  value: string;
+  onChange: (val: string) => void;
   placeholder?: string;
   lang?: string;
 }> = ({ value, onChange, placeholder, lang }) => {
@@ -83,10 +83,10 @@ const RichTextEditor: React.FC<{
     <div className={`flex flex-col border-2 rounded-2xl overflow-hidden transition-all bg-white ${isFocused ? 'border-amber-900 ring-4 ring-amber-50' : 'border-slate-100'}`}>
       {/* WORD RIBBON TOOLBAR */}
       <div className="bg-slate-50 border-b border-slate-100 p-2 flex flex-wrap gap-1 items-center sticky top-0 z-10 shadow-sm">
-        
+
         {/* Font Group */}
         <div className="flex items-center bg-white border border-slate-200 rounded-lg px-1 mr-1">
-          <select 
+          <select
             onChange={(e) => exec('fontName', e.target.value)}
             className="text-[10px] font-bold p-1 bg-transparent outline-none w-24"
             title="Font Family"
@@ -98,7 +98,7 @@ const RichTextEditor: React.FC<{
             <option value="Courier New">Monospace</option>
           </select>
           <div className="w-px h-4 bg-slate-200 mx-1"></div>
-          <select 
+          <select
             onChange={(e) => exec('fontSize', e.target.value)}
             className="text-[10px] font-bold p-1 bg-transparent outline-none w-12"
             title="Font Size"
@@ -124,11 +124,11 @@ const RichTextEditor: React.FC<{
         {/* Color Group */}
         <div className="flex items-center gap-0.5 bg-white border border-slate-200 rounded-lg p-0.5 mr-1">
           <div className="relative group">
-            <ToolbarButton onClick={() => {}} icon={<path d="M11 4l-7 16m14-16l7 16M8 16h8M12 4v16" />} title="Text Color" />
+            <ToolbarButton onClick={() => { }} icon={<path d="M11 4l-7 16m14-16l7 16M8 16h8M12 4v16" />} title="Text Color" />
             <input type="color" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => exec('foreColor', e.target.value)} />
           </div>
           <div className="relative group">
-            <ToolbarButton onClick={() => {}} icon={<path d="M4 21h16M7 14h10M9 4l6 10H9l6-10" />} title="Highlight" />
+            <ToolbarButton onClick={() => { }} icon={<path d="M4 21h16M7 14h10M9 4l6 10H9l6-10" />} title="Highlight" />
             <input type="color" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => exec('hiliteColor', e.target.value)} />
           </div>
         </div>
@@ -155,8 +155,8 @@ const RichTextEditor: React.FC<{
             if (url) exec('insertImage', url);
           }} icon={<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2zM9 22V12h6v10" />} title="Picture" />
           <ToolbarButton onClick={() => {
-             const url = prompt("Link URL?", "https://");
-             if (url) exec('createLink', url);
+            const url = prompt("Link URL?", "https://");
+            if (url) exec('createLink', url);
           }} icon={<path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />} title="Link" />
         </div>
 
@@ -170,7 +170,7 @@ const RichTextEditor: React.FC<{
       </div>
 
       {/* EDITING AREA */}
-      <div 
+      <div
         ref={editorRef}
         contentEditable
         onInput={handleInput}
@@ -184,7 +184,7 @@ const RichTextEditor: React.FC<{
 };
 
 const ToolbarButton: React.FC<{ onClick: () => void; icon: React.ReactNode; title: string }> = ({ onClick, icon, title }) => (
-  <button 
+  <button
     type="button"
     onMouseDown={(e) => {
       e.preventDefault(); // Prevent focus loss from editor
@@ -241,15 +241,28 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
   const handleCreate = () => {
     setCurrentItem({
       id: '', title: '', titleZh: '', titleKh: '',
-      category: 'History', author: '', authorZh: '',
+      category: 'History',
+      // Contributors
+      author: '', authorZh: '', authorKh: '',
+      artist: '', artistZh: '', artistKh: '',
+      presenter: '', presenterZh: '', presenterKh: '',
+      // Visuals
       imageUrl: 'https://picsum.photos/800/450',
       coverUrl: 'https://picsum.photos/300/400',
       thumbnailUrl: 'https://picsum.photos/600/338',
+      // Content
       content: '', contentZh: '', contentKh: '',
       excerpt: '', excerptZh: '', excerptKh: '',
+      // Metadata
       date: new Date().toISOString().split('T')[0],
-      readTime: '5 min', views: 0,
-      pdfUrl: '', fileSize: '', pages: 0
+      readTime: '5 min',
+      duration: '04:00',
+      views: 0,
+      plays: 0,
+      // Digital Assets
+      pdfUrl: '', fileSize: '', pages: 0,
+      audioUrl: '',
+      videoUrl: ''
     });
     setIsEditing(true);
   };
@@ -264,34 +277,37 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border border-slate-100">
-           <h2 className="text-3xl font-serif font-bold text-center mb-8">{loginStep === 'credentials' ? 'Admin Gateway' : 'Identity Verification'}</h2>
-           {loginStep === 'credentials' ? (
-             <form onSubmit={handleLogin} className="space-y-6">
-                <input type="text" placeholder="Username" className="w-full p-4 bg-slate-50 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-amber-900/20" value={username} onChange={e => setUsername(e.target.value)} />
-                <input type="password" placeholder="Password" className="w-full p-4 bg-slate-50 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-amber-900/20" value={password} onChange={e => setPassword(e.target.value)} />
-                <button type="submit" className="w-full py-4 bg-amber-900 text-white font-bold rounded-xl shadow-xl">Proceed</button>
-             </form>
-           ) : (
-             <form onSubmit={handleVerifyCode} className="space-y-6">
-                <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 mb-4">
-                  <p className="text-xs text-amber-800 font-bold uppercase tracking-widest mb-1">Dev Environment Security</p>
-                  <p className="text-sm">Verification code: <span className="font-mono font-bold text-lg text-amber-900">{verificationCode}</span></p>
-                </div>
-                <input type="text" placeholder="000000" className="w-full p-4 bg-slate-50 rounded-xl border border-slate-200 text-center tracking-widest font-mono text-xl" value={inputCode} onChange={e => setInputCode(e.target.value)} />
-                <button type="submit" className="w-full py-4 bg-amber-900 text-white font-bold rounded-xl shadow-xl">Verify & Enter</button>
-             </form>
-           )}
-           {loginError && <p className="text-red-600 text-sm text-center mt-4">{loginError}</p>}
+          <h2 className="text-3xl font-serif font-bold text-center mb-8">{loginStep === 'credentials' ? 'Admin Gateway' : 'Identity Verification'}</h2>
+          {loginStep === 'credentials' ? (
+            <form onSubmit={handleLogin} className="space-y-6">
+              <input type="text" placeholder="Username" className="w-full p-4 bg-slate-50 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-amber-900/20" value={username} onChange={e => setUsername(e.target.value)} />
+              <input type="password" placeholder="Password" className="w-full p-4 bg-slate-50 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-amber-900/20" value={password} onChange={e => setPassword(e.target.value)} />
+              <button type="submit" className="w-full py-4 bg-amber-900 text-white font-bold rounded-xl shadow-xl">Proceed</button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyCode} className="space-y-6">
+              <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 mb-4">
+                <p className="text-xs text-amber-800 font-bold uppercase tracking-widest mb-1">Dev Environment Security</p>
+                <p className="text-sm">Verification code: <span className="font-mono font-bold text-lg text-amber-900">{verificationCode}</span></p>
+              </div>
+              <input type="text" placeholder="000000" className="w-full p-4 bg-slate-50 rounded-xl border border-slate-200 text-center tracking-widest font-mono text-xl" value={inputCode} onChange={e => setInputCode(e.target.value)} />
+              <button type="submit" className="w-full py-4 bg-amber-900 text-white font-bold rounded-xl shadow-xl">Verify & Enter</button>
+            </form>
+          )}
+          {loginError && <p className="text-red-600 text-sm text-center mt-4">{loginError}</p>}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="pb-20 animate-fade-in">
+    <div className="pb-20 animate-fade-in relative">
       <div className="flex justify-between items-end mb-12 border-b border-slate-100 pb-8">
         <div>
-          <h1 className="text-5xl font-serif font-bold text-slate-900 mb-2">Editor Suite</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-5xl font-serif font-bold text-slate-900">Editor Suite</h1>
+            <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-widest rounded-full border border-green-200" title="Data synced via local server">Live Sync</span>
+          </div>
           <p className="text-slate-500 font-medium">Full management control for Insight Sharing digital content.</p>
         </div>
         <div className="flex gap-4">
@@ -306,16 +322,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
       <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
         <div className="flex bg-slate-50/50 p-1">
           {['book', 'article', 'audio', 'video'].map(tab => (
-            <button 
-              key={tab} 
-              onClick={() => setActiveTab(tab as any)} 
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
               className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-all rounded-xl ${activeTab === tab ? 'bg-white text-amber-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
             >
               {tab}s
             </button>
           ))}
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
@@ -332,7 +348,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
                   <td className="p-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-14 bg-slate-100 rounded flex-shrink-0 overflow-hidden shadow-sm">
-                         <img src={item.coverUrl || item.imageUrl || item.thumbnailUrl} className="w-full h-full object-cover" />
+                        <img src={item.coverUrl || item.imageUrl || item.thumbnailUrl} className="w-full h-full object-cover" />
                       </div>
                       <span className="font-bold text-slate-800">{item.title}</span>
                     </div>
@@ -342,7 +358,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
                     <span className="text-[10px] font-bold uppercase px-2 py-1 bg-slate-100 rounded text-slate-500">{item.category}</span>
                   </td>
                   <td className="p-6 text-right">
-                    <button onClick={() => { setCurrentItem({...item}); setIsEditing(true); }} className="p-2 text-slate-400 hover:text-amber-900 hover:bg-amber-50 rounded-full transition-all">
+                    <button onClick={() => { setCurrentItem({ ...item }); setIsEditing(true); }} className="p-2 text-slate-400 hover:text-amber-900 hover:bg-amber-50 rounded-full transition-all">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                     </button>
                     <button onClick={() => onDelete(activeTab, item.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all">
@@ -360,134 +376,158 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md animate-fade-in overflow-y-auto">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col my-8">
             <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white z-20">
-               <div>
-                 <h2 className="text-3xl font-serif font-bold text-slate-900">{currentItem.id ? 'Edit' : 'Create'} {activeTab}</h2>
-                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mt-1">Global Library Asset Manager</p>
-               </div>
-               <button onClick={() => setIsEditing(false)} className="w-12 h-12 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-800 rounded-full transition-all">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-               </button>
+              <div>
+                <h2 className="text-3xl font-serif font-bold text-slate-900">{currentItem.id ? 'Edit' : 'Create'} {activeTab}</h2>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mt-1">Global Library Asset Manager</p>
+              </div>
+              <button onClick={() => setIsEditing(false)} className="w-12 h-12 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-800 rounded-full transition-all">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto p-10 space-y-12">
-               {/* Multi-language Title Field Group */}
-               <section className="space-y-6">
-                 <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">1. Localized Titles</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-bold uppercase text-slate-400">English Title</label>
-                     <input required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all" value={currentItem.title} onChange={e => setCurrentItem({...currentItem, title: e.target.value})} />
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-bold uppercase text-slate-400">Chinese Title</label>
-                     <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all chinese-text" value={currentItem.titleZh} onChange={e => setCurrentItem({...currentItem, titleZh: e.target.value})} />
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-bold uppercase text-slate-400">Khmer Title</label>
-                     <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all khmer-text font-serif" value={currentItem.titleKh || ''} onChange={e => setCurrentItem({...currentItem, titleKh: e.target.value})} />
-                   </div>
-                 </div>
-               </section>
+              {/* Multi-language Title Field Group */}
+              <section className="space-y-6">
+                <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">1. Localized Titles</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-400">English Title</label>
+                    <input required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all" value={currentItem.title} onChange={e => setCurrentItem({ ...currentItem, title: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-400">Chinese Title</label>
+                    <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all chinese-text" value={currentItem.titleZh} onChange={e => setCurrentItem({ ...currentItem, titleZh: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-400">Khmer Title</label>
+                    <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all khmer-text font-serif" value={currentItem.titleKh || ''} onChange={e => setCurrentItem({ ...currentItem, titleKh: e.target.value })} />
+                  </div>
+                </div>
+              </section>
 
-               {/* Advanced Rich Text Content Editors */}
-               {activeTab === 'article' && (
-                 <section className="space-y-10">
-                   <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">2. Article Content (Rich Text)</h3>
-                   
-                   <div className="space-y-4">
-                     <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
-                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">EN</span>
-                        English Body Content
-                     </label>
-                     <RichTextEditor value={currentItem.content || ''} onChange={val => setCurrentItem({...currentItem, content: val})} />
-                   </div>
+              {/* Advanced Rich Text Content Editors */}
+              {activeTab === 'article' && (
+                <section className="space-y-10">
+                  <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">2. Article Content (Rich Text)</h3>
 
-                   <div className="space-y-4">
-                     <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
-                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">ZH</span>
-                        Chinese Body Content (中文正文)
-                     </label>
-                     <RichTextEditor lang="zh" value={currentItem.contentZh || ''} onChange={val => setCurrentItem({...currentItem, contentZh: val})} />
-                   </div>
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                      <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">EN</span>
+                      English Body Content
+                    </label>
+                    <RichTextEditor value={currentItem.content || ''} onChange={val => setCurrentItem({ ...currentItem, content: val })} />
+                  </div>
 
-                   <div className="space-y-4">
-                     <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
-                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">KH</span>
-                        Khmer Body Content (ខ្លឹមសារអត្ថបទខ្មែរ)
-                     </label>
-                     <RichTextEditor lang="kh" value={currentItem.contentKh || ''} onChange={val => setCurrentItem({...currentItem, contentKh: val})} />
-                   </div>
-                 </section>
-               )}
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                      <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">ZH</span>
+                      Chinese Body Content (中文正文)
+                    </label>
+                    <RichTextEditor lang="zh" value={currentItem.contentZh || ''} onChange={val => setCurrentItem({ ...currentItem, contentZh: val })} />
+                  </div>
 
-               {/* Simple Metadata Group */}
-               <section className="space-y-6">
-                 <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">3. Primary Metadata</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  <div className="space-y-4">
+                    <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                      <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">KH</span>
+                      Khmer Body Content (ខ្លឹមសារអត្ថបទខ្មែរ)
+                    </label>
+                    <RichTextEditor lang="kh" value={currentItem.contentKh || ''} onChange={val => setCurrentItem({ ...currentItem, contentKh: val })} />
+                  </div>
+                </section>
+              )}
+
+              {/* Simple Metadata Group */}
+              <section className="space-y-6">
+                <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">3. Primary Metadata</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-400">Category</label>
+                    <select className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={currentItem.category} onChange={e => setCurrentItem({ ...currentItem, category: e.target.value })}>
+                      {(activeTab === 'video' ? VIDEO_CATEGORIES : activeTab === 'audio' ? AUDIO_CATEGORIES : CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-400">Contributor</label>
+                    <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none" placeholder="Author, Artist or Presenter" value={currentItem.author || currentItem.artist || currentItem.presenter || ''} onChange={e => {
+                      if (activeTab === 'book' || activeTab === 'article') setCurrentItem({ ...currentItem, author: e.target.value });
+                      else if (activeTab === 'audio') setCurrentItem({ ...currentItem, artist: e.target.value });
+                      else if (activeTab === 'video') setCurrentItem({ ...currentItem, presenter: e.target.value });
+                    }} />
+                  </div>
+                  <div className="lg:col-span-2 space-y-2">
+                    <label className="text-[10px] font-bold uppercase text-slate-400">Asset URL (Cover/Thumbnail)</label>
+                    <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono text-xs" value={currentItem.coverUrl || currentItem.imageUrl || currentItem.thumbnailUrl || ''} onChange={e => {
+                      if (activeTab === 'video') setCurrentItem({ ...currentItem, thumbnailUrl: e.target.value });
+                      else if (activeTab === 'article') setCurrentItem({ ...currentItem, imageUrl: e.target.value });
+                      else setCurrentItem({ ...currentItem, coverUrl: e.target.value });
+                    }} />
+                  </div>
+                </div>
+
+                {/* Digital Document Section for Books */}
+                {activeTab === 'book' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-slate-50 pt-6 mt-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase text-slate-400">Category</label>
-                      <select className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={currentItem.category} onChange={e => setCurrentItem({...currentItem, category: e.target.value})}>
-                         {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
+                      <label className="text-[10px] font-bold uppercase text-slate-400">Digital Document (External PDF URL)</label>
+                      <input
+                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all font-mono text-xs"
+                        placeholder="https://drive.google.com/uc?id=... or S3 link"
+                        value={currentItem.pdfUrl || ''}
+                        onChange={e => setCurrentItem({ ...currentItem, pdfUrl: e.target.value })}
+                      />
+                      <p className="text-[9px] text-slate-400 italic">Upload to Google Drive, S3, or similar and paste the public direct link here.</p>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase text-slate-400">Author/Presenter</label>
-                      <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none" value={currentItem.author || currentItem.artist || currentItem.presenter || ''} onChange={e => {
-                         if(activeTab === 'book' || activeTab === 'article') setCurrentItem({...currentItem, author: e.target.value});
-                         else if(activeTab === 'audio') setCurrentItem({...currentItem, artist: e.target.value});
-                         else setCurrentItem({...currentItem, presenter: e.target.value});
-                      }} />
+                      <label className="text-[10px] font-bold uppercase text-slate-400">File Metadata (Size & Pages)</label>
+                      <div className="flex gap-4">
+                        <input
+                          className="flex-grow p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all"
+                          placeholder="Size (e.g. 5.2 MB)"
+                          value={currentItem.fileSize || ''}
+                          onChange={e => setCurrentItem({ ...currentItem, fileSize: e.target.value })}
+                        />
+                        <input
+                          type="number"
+                          className="w-32 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all"
+                          placeholder="Pages"
+                          value={currentItem.pages || 0}
+                          onChange={e => setCurrentItem({ ...currentItem, pages: parseInt(e.target.value) || 0 })}
+                        />
+                      </div>
                     </div>
-                    <div className="lg:col-span-2 space-y-2">
-                      <label className="text-[10px] font-bold uppercase text-slate-400">Asset URL (Cover/Thumbnail)</label>
-                      <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono text-xs" value={currentItem.coverUrl || currentItem.imageUrl || currentItem.thumbnailUrl || ''} onChange={e => {
-                         if(activeTab === 'video') setCurrentItem({...currentItem, thumbnailUrl: e.target.value});
-                         else if(activeTab === 'article') setCurrentItem({...currentItem, imageUrl: e.target.value});
-                         else setCurrentItem({...currentItem, coverUrl: e.target.value});
-                      }} />
-                    </div>
-                 </div>
+                  </div>
+                )}
 
-                 {/* Digital Document Section for Books */}
-                 {activeTab === 'book' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-slate-50 pt-6 mt-6">
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-bold uppercase text-slate-400">Digital Document (External PDF URL)</label>
-                          <input 
-                            className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all font-mono text-xs" 
-                            placeholder="https://drive.google.com/uc?id=... or S3 link"
-                            value={currentItem.pdfUrl || ''} 
-                            onChange={e => setCurrentItem({...currentItem, pdfUrl: e.target.value})} 
-                          />
-                          <p className="text-[9px] text-slate-400 italic">Upload to Google Drive, S3, or similar and paste the public direct link here.</p>
-                       </div>
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-bold uppercase text-slate-400">File Metadata (Size & Pages)</label>
-                          <div className="flex gap-4">
-                            <input 
-                                className="flex-grow p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all" 
-                                placeholder="Size (e.g. 5.2 MB)"
-                                value={currentItem.fileSize || ''} 
-                                onChange={e => setCurrentItem({...currentItem, fileSize: e.target.value})} 
-                            />
-                            <input 
-                                type="number"
-                                className="w-32 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all" 
-                                placeholder="Pages"
-                                value={currentItem.pages || 0} 
-                                onChange={e => setCurrentItem({...currentItem, pages: parseInt(e.target.value) || 0})} 
-                            />
-                          </div>
-                       </div>
+                {/* Media Asset Section for Audio/Video */}
+                {(activeTab === 'audio' || activeTab === 'video') && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-slate-50 pt-6 mt-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase text-slate-400">{activeTab === 'audio' ? 'Audio Source URL (.mp3)' : 'Video Source URL (.mp4)'}</label>
+                      <input
+                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all font-mono text-xs"
+                        placeholder={activeTab === 'audio' ? 'https://example.com/file.mp3' : 'https://example.com/file.mp4'}
+                        value={activeTab === 'audio' ? currentItem.audioUrl || '' : currentItem.videoUrl || ''}
+                        onChange={e => setCurrentItem({ ...currentItem, [activeTab === 'audio' ? 'audioUrl' : 'videoUrl']: e.target.value })}
+                      />
                     </div>
-                 )}
-               </section>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase text-slate-400">Duration (MM:SS)</label>
+                      <input
+                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all"
+                        placeholder="e.g. 05:22"
+                        value={currentItem.duration || ''}
+                        onChange={e => setCurrentItem({ ...currentItem, duration: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              <div className="pt-8 flex justify-end gap-4 border-t border-slate-100 sticky bottom-0 bg-white py-4 -mx-10 px-10">
+                <button type="button" onClick={() => setIsEditing(false)} className="px-8 py-4 text-slate-500 font-bold">Cancel</button>
+                <button type="submit" className="px-12 py-4 bg-amber-900 text-white font-bold rounded-xl shadow-xl">Save Changes</button>
+              </div>
             </form>
-
-            <div className="p-10 border-t border-slate-100 bg-slate-50 flex gap-6 shrink-0">
-               <button type="button" onClick={() => setIsEditing(false)} className="flex-1 py-5 bg-white border-2 border-slate-200 text-slate-500 font-bold rounded-2xl hover:bg-slate-50 hover:text-slate-700 transition-all">Cancel Draft</button>
-               <button onClick={handleSubmit} className="flex-[2] py-5 bg-amber-900 text-white font-bold rounded-2xl shadow-2xl shadow-amber-900/30 hover:bg-amber-800 transition-all transform active:scale-[0.98]">Publish & Sync Assets</button>
-            </div>
           </div>
         </div>
       )}

@@ -1,0 +1,121 @@
+{
+  "books": [
+    {
+      "id": "book-analects-confucius",
+      "title": "The Analects",
+      "titleZh": "论语",
+      "titleKh": "អាណាលេក",
+      "author": "Confucius",
+      "authorZh": "孔子",
+      "category": "Philosophy",
+      "categoryZh": "哲学",
+      "year": "475 BC",
+      "coverUrl": "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=600&q=80",
+      "description": "A collection of sayings and ideas attributed to the Chinese philosopher Confucius.",
+      "descriptionZh": "记录孔子及其弟子言行的语录集。",
+      "pages": 350,
+      "views": 12500,
+      "fileSize": "4.5 MB",
+      "pdfUrl": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
+    {
+      "id": "book-tao-te-ching",
+      "title": "Tao Te Ching",
+      "titleZh": "道德经",
+      "titleKh": "តាវតឺជីង",
+      "author": "Laozi",
+      "authorZh": "老子",
+      "category": "Philosophy",
+      "categoryZh": "哲学",
+      "year": "400 BC",
+      "coverUrl": "https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?auto=format&fit=crop&w=600&q=80",
+      "description": "A fundamental text for both philosophical and religious Taoism.",
+      "descriptionZh": "道家哲学思想的重要来源。",
+      "pages": 81,
+      "views": 9800,
+      "fileSize": "2.1 MB",
+      "pdfUrl": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
+    {
+      "id": "book-art-of-war",
+      "title": "Art of War",
+      "titleZh": "孙子兵法",
+      "titleKh": "សិល្បៈសង្គ្រាម",
+      "author": "Sun Tzu",
+      "authorZh": "孙武",
+      "category": "Philosophy",
+      "categoryZh": "哲学",
+      "year": "500 BC",
+      "coverUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80",
+      "description": "An ancient Chinese military treatise attributed to Sun Tzu.",
+      "descriptionZh": "世界上最早的兵书之一。",
+      "pages": 50,
+      "views": 30500,
+      "fileSize": "1.5 MB",
+      "pdfUrl": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    }
+  ],
+  "articles": [
+    {
+      "id": "art-1",
+      "title": "The Resonance of Ancient Music",
+      "titleZh": "古乐的共鸣",
+      "titleKh": "សំឡេងនៃតន្ត្រីបុរាណ",
+      "excerpt": "Exploring how traditional Chinese musical instruments like the Erhu and Pipa connect modern audiences.",
+      "excerptZh": "探讨二胡、琵琶等中国传统乐器如何将现代观众联系在一起。",
+      "author": "Elena Wong",
+      "authorZh": "王艾琳",
+      "date": "2024-05-15",
+      "readTime": "8 min",
+      "imageUrl": "https://images.unsplash.com/photo-1516280440614-6697288d5d38?auto=format&fit=crop&w=800&q=80",
+      "category": "Arts",
+      "views": 3200
+    },
+    {
+      "id": "art-2",
+      "title": "Confucian Values in the Digital Age",
+      "titleZh": "数字时代的儒家价值观",
+      "titleKh": "តម្លៃខុងជឺក្នុងយុគសម័យឌីជីថល",
+      "excerpt": "Can ancient wisdom regarding filial piety guide our interactions in a hyper-connected world?",
+      "excerptZh": "关于孝道的古老智慧能否指导我们在高度互联的世界中的互动？",
+      "author": "Dr. Liang Chen",
+      "authorZh": "陈亮博士",
+      "date": "2024-05-10",
+      "readTime": "12 min",
+      "imageUrl": "https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&w=800&q=80",
+      "category": "Philosophy",
+      "views": 4500
+    }
+  ],
+  "audios": [
+    {
+      "id": "aud-1",
+      "title": "Divine Mercy",
+      "titleZh": "慈悲的展现",
+      "artist": "Shen Yun Symphony",
+      "artistZh": "神韵交响乐团",
+      "category": "Symphony",
+      "categoryZh": "交响乐",
+      "coverUrl": "https://images.unsplash.com/photo-1514320298324-a4a278ea605f?auto=format&fit=crop&w=500&q=60",
+      "duration": "04:15",
+      "date": "2024-05-12",
+      "plays": 5420,
+      "audioUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-1",
+      "title": "Understanding Culture",
+      "titleZh": "理解传统文化",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1514533240710-2856035caee9?auto=format&fit=crop&w=800&q=80",
+      "duration": "15:30",
+      "category": "Documentary",
+      "categoryZh": "纪录片",
+      "views": 12000,
+      "date": "2024-05-14",
+      "presenter": "Prof. Zhang",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    }
+  ]
+}
