@@ -80,9 +80,9 @@ const RichTextEditor: React.FC<{
   };
 
   return (
-    <div className={`flex flex-col border-2 rounded-2xl overflow-hidden transition-all bg-white ${isFocused ? 'border-amber-900 ring-4 ring-amber-50' : 'border-slate-100'}`}>
+    <div className={`flex flex-col border-2 rounded-2xl transition-all bg-white ${isFocused ? 'border-amber-900 ring-4 ring-amber-50' : 'border-slate-100'}`}>
       {/* WORD RIBBON TOOLBAR */}
-      <div className="bg-slate-50 border-b border-slate-100 p-2 flex flex-wrap gap-1 items-center sticky top-0 z-10 shadow-sm">
+      <div className="bg-slate-50 border-b border-slate-100 p-2 flex flex-wrap gap-1 items-center sticky top-0 z-10 shadow-sm rounded-t-[14px]">
 
         {/* Font Group */}
         <div className="flex items-center bg-white border border-slate-200 rounded-lg px-1 mr-1">
@@ -176,7 +176,7 @@ const RichTextEditor: React.FC<{
         onInput={handleInput}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className={`p-8 min-h-[400px] outline-none prose prose-slate max-w-none text-base leading-relaxed overflow-y-auto ${lang === 'zh' ? 'chinese-text' : (lang === 'kh' ? 'khmer-text font-serif' : 'font-serif')}`}
+        className={`p-8 min-h-[400px] outline-none prose prose-slate max-w-none text-base leading-relaxed overflow-y-auto rounded-b-[14px] ${lang === 'zh' ? 'chinese-text' : (lang === 'kh' ? 'khmer-text font-serif' : 'font-serif')}`}
         style={{ scrollBehavior: 'smooth' }}
       ></div>
     </div>

@@ -8,11 +8,12 @@ import { Language, Audio } from '../types';
 const ITEMS_PER_PAGE = 8;
 
 interface AudioPageProps {
-  language: Language;
-  audios: Audio[];
+    language: Language;
+    audios: Audio[];
+    onAudioPlay?: (audio: Audio) => void;
 }
 
-export const AudioPage: React.FC<AudioPageProps> = ({ language, audios }) => {
+export const AudioPage: React.FC<AudioPageProps> = ({ language, audios, onAudioPlay }) => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [playingAudio, setPlayingAudio] = useState<Audio | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +25,7 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios }) => {
     }, [selectedCategory]);
 
     const filteredAudios = audios.filter(a => selectedCategory === 'All' || a.category === selectedCategory);
-    
+
     // Pagination Logic
     const totalPages = Math.ceil(filteredAudios.length / ITEMS_PER_PAGE);
     const displayedAudios = filteredAudios.slice(
@@ -51,17 +52,16 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios }) => {
                     <span>{audios.length} {t.totalTracks}</span>
                 </div>
             </div>
-            
+
             <div className="flex overflow-x-auto pb-4 gap-2 mb-8 scrollbar-hide">
                 {AUDIO_CATEGORIES.map(cat => (
                     <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
-                        className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                            selectedCategory === cat 
-                            ? 'bg-amber-900 text-white shadow-md' 
+                        className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-all ${selectedCategory === cat
+                            ? 'bg-amber-900 text-white shadow-md'
                             : 'bg-white border border-slate-200 text-slate-600 hover:border-amber-900 hover:text-amber-900'
-                        } ${language === 'zh' ? 'chinese-text' : ''}`}
+                            } ${language === 'zh' ? 'chinese-text' : ''}`}
                     >
                         {cat === 'All' ? t.all : cat}
                     </button>
@@ -70,22 +70,25 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios }) => {
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 gap-y-10">
                 {displayedAudios.map(audio => (
-                    <AudioCard 
-                        key={audio.id} 
-                        audio={audio} 
-                        language={language} 
-                        onPlay={setPlayingAudio}
+                    <AudioCard
+                        key={audio.id}
+                        audio={audio}
+                        language={language}
+                        onPlay={(audio) => {
+                            setPlayingAudio(audio);
+                            if (onAudioPlay) onAudioPlay(audio);
+                        }}
                     />
                 ))}
             </div>
 
-            <Pagination 
+            <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
 
-             <div className="mt-16 py-12 bg-slate-900 rounded-2xl text-center px-6 relative overflow-hidden group">
+            <div className="mt-16 py-12 bg-slate-900 rounded-2xl text-center px-6 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                 <div className="relative z-10">
                     <h2 className={`text-2xl font-serif font-bold text-white mb-3 ${language === 'zh' ? 'chinese-text' : ''}`}>{language === 'zh' ? '神韵交响乐团' : 'Shen Yun Symphony Orchestra'}</h2>
@@ -93,16 +96,16 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios }) => {
                         {language === 'zh' ? '体验神韵原创作品，将中国音乐的精神与西方交响乐的力量完美融合。' : 'Experience the original compositions of Shen Yun, blending the spirit of Chinese music with the power of a Western orchestra.'}
                     </p>
                     <button className="bg-amber-700 hover:bg-amber-600 text-white px-8 py-3 rounded-full font-semibold transition-all shadow-lg hover:shadow-amber-900/50 flex items-center gap-2 mx-auto">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                         {t.listenNow}
                     </button>
                 </div>
             </div>
 
             {playingAudio && (
-                <AudioPlayerModal 
-                    audio={playingAudio} 
-                    onClose={() => setPlayingAudio(null)} 
+                <AudioPlayerModal
+                    audio={playingAudio}
+                    onClose={() => setPlayingAudio(null)}
                     language={language}
                 />
             )}
