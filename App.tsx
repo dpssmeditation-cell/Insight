@@ -20,7 +20,6 @@ import { Book, Category, Language, ViewState, Audio, Video, User, Article } from
 import { UI_STRINGS } from './constants';
 import { authService } from './services/authService';
 import { firebaseService } from './services/firebaseService';
-import { presenceService } from './services/presenceService';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -41,7 +40,6 @@ const App: React.FC = () => {
   });
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [viewerCount, setViewerCount] = useState<number>(0);
 
   // Initialize state from Database Service
   const [books, setBooks] = useState<Book[]>([]);
@@ -78,21 +76,6 @@ const App: React.FC = () => {
       }
     };
     loadData();
-  }, []);
-
-  // Track presence
-  useEffect(() => {
-    const presenceUnsub = presenceService.trackPresence();
-
-    // Subscribe to viewer count
-    const countUnsub = presenceService.subscribeToViewerCount((count) => {
-      setViewerCount(count);
-    });
-
-    return () => {
-      presenceUnsub();
-      countUnsub();
-    };
   }, []);
 
   useEffect(() => {
@@ -173,44 +156,6 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleBookClick = (book: Book) => {
-    setSelectedBook(book);
-
-    // Optimistic update
-    setBooks(prevBooks => prevBooks.map(b =>
-      b.id === book.id ? { ...b, views: (b.views || 0) + 1 } : b
-    ));
-
-    firebaseService.incrementView('books', book.id);
-  };
-
-  const handleArticleClick = (article: Article) => {
-    // Optimistic update
-    setArticles(prev => prev.map(a =>
-      a.id === article.id ? { ...a, views: (a.views || 0) + 1 } : a
-    ));
-
-    firebaseService.incrementView('articles', article.id);
-  };
-
-  const handleAudioPlay = (audio: Audio) => {
-    // Optimistic update
-    setAudios(prev => prev.map(a =>
-      a.id === audio.id ? { ...a, plays: (a.plays || 0) + 1 } : a
-    ));
-
-    firebaseService.incrementView('audios', audio.id);
-  };
-
-  const handleVideoPlay = (video: Video) => {
-    // Optimistic update
-    setVideos(prev => prev.map(v =>
-      v.id === video.id ? { ...v, views: (v.views || 0) + 1 } : v
-    ));
-
-    firebaseService.incrementView('videos', video.id);
-  };
-
   const handleReadBook = (book: Book) => {
     addToHistory(book.id, 'book');
     setReadingBook(book);
@@ -255,26 +200,13 @@ const App: React.FC = () => {
           <div className="text-center py-20 dark:text-slate-300">Please log in to view library.</div>
         );
       case 'articles':
-        return <ArticlesPage language={language} articles={articles} onArticleClick={handleArticleClick} />;
+        return <ArticlesPage language={language} articles={articles} />;
       case 'multimedia':
-        return <MultimediaPage language={language} videos={videos} onVideoPlay={handleVideoPlay} />;
+        return <MultimediaPage language={language} videos={videos} />;
       case 'about':
-        return (
-          <AboutPage
-            language={language}
-            onRead={handleReadBook}
-            onBookClick={handleBookClick}
-            onArticleClick={handleArticleClick}
-            onAudioPlay={handleAudioPlay}
-            onVideoPlay={handleVideoPlay}
-            books={books}
-            audios={audios}
-            videos={videos}
-            articles={articles}
-          />
-        );
+        return <AboutPage language={language} onRead={handleReadBook} books={books} audios={audios} videos={videos} articles={articles} />;
       case 'audio':
-        return <AudioPage language={language} audios={audios} onAudioPlay={handleAudioPlay} />;
+        return <AudioPage language={language} audios={audios} />;
       case 'donate':
         return <DonationPage language={language} />;
       case 'books':
@@ -317,7 +249,7 @@ const App: React.FC = () => {
 
             <BookGrid
               books={displayedBooks}
-              onBookClick={handleBookClick}
+              onBookClick={setSelectedBook}
               language={language}
             />
 
@@ -391,7 +323,7 @@ const App: React.FC = () => {
         {renderContent()}
       </main>
 
-      <Footer language={language} onNavigate={handleNavigate} viewerCount={viewerCount} />
+      <Footer language={language} onNavigate={handleNavigate} />
 
       {selectedBook && (
         <BookModal
