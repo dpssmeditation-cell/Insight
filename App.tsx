@@ -19,7 +19,7 @@ import { MyLibraryPage } from './components/MyLibraryPage';
 import { Book, Category, Language, ViewState, Audio, Video, User, Article } from './types';
 import { UI_STRINGS } from './constants';
 import { authService } from './services/authService';
-import { databaseService } from './services/databaseService';
+import { firebaseService } from './services/firebaseService';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -55,16 +55,25 @@ const App: React.FC = () => {
     if (user) setCurrentUser(user);
 
     const loadData = async () => {
-      const [b, a, v, ar] = await Promise.all([
-        databaseService.getBooks(),
-        databaseService.getAudios(),
-        databaseService.getVideos(),
-        databaseService.getArticles()
-      ]);
-      setBooks(b);
-      setAudios(a);
-      setVideos(v);
-      setArticles(ar);
+      try {
+        const [b, a, v, ar] = await Promise.all([
+          firebaseService.getBooks(),
+          firebaseService.getAudios(),
+          firebaseService.getVideos(),
+          firebaseService.getArticles()
+        ]);
+        setBooks(b);
+        setAudios(a);
+        setVideos(v);
+        setArticles(ar);
+      } catch (error) {
+        console.error('Error loading data from Firebase:', error);
+        // Fallback to empty arrays if Firebase fails
+        setBooks([]);
+        setAudios([]);
+        setVideos([]);
+        setArticles([]);
+      }
     };
     loadData();
   }, []);
@@ -258,12 +267,12 @@ const App: React.FC = () => {
     const finalItem = item.id ? item : { ...item, id: Date.now().toString() };
 
     try {
-      // Save to database
+      // Save to Firebase
       let newData;
-      if (type === 'book') newData = await databaseService.saveBook(finalItem);
-      else if (type === 'audio') newData = await databaseService.saveAudio(finalItem);
-      else if (type === 'video') newData = await databaseService.saveVideo(finalItem);
-      else if (type === 'article') newData = await databaseService.saveArticle(finalItem);
+      if (type === 'book') newData = await firebaseService.saveBook(finalItem);
+      else if (type === 'audio') newData = await firebaseService.saveAudio(finalItem);
+      else if (type === 'video') newData = await firebaseService.saveVideo(finalItem);
+      else if (type === 'article') newData = await firebaseService.saveArticle(finalItem);
 
       // Refresh relevant state
       if (type === 'book') setBooks(newData as Book[]);
@@ -271,19 +280,19 @@ const App: React.FC = () => {
       else if (type === 'video') setVideos(newData as Video[]);
       else if (type === 'article') setArticles(newData as Article[]);
     } catch (error) {
-      alert("Failed to save item. Make sure the backend server (npm run server) is running.");
+      alert("Failed to save item to Firebase. Please check your internet connection.");
       console.error(error);
     }
   };
 
   const handleDeleteItem = async (type: 'book' | 'audio' | 'video' | 'article', id: string) => {
     try {
-      // Delete from database
+      // Delete from Firebase
       let newData;
-      if (type === 'book') newData = await databaseService.deleteBook(id);
-      else if (type === 'audio') newData = await databaseService.deleteAudio(id);
-      else if (type === 'video') newData = await databaseService.deleteVideo(id);
-      else if (type === 'article') newData = await databaseService.deleteArticle(id);
+      if (type === 'book') newData = await firebaseService.deleteBook(id);
+      else if (type === 'audio') newData = await firebaseService.deleteAudio(id);
+      else if (type === 'video') newData = await firebaseService.deleteVideo(id);
+      else if (type === 'article') newData = await firebaseService.deleteArticle(id);
 
       // Refresh relevant state
       if (type === 'book') setBooks(newData as Book[]);
@@ -291,7 +300,7 @@ const App: React.FC = () => {
       else if (type === 'video') setVideos(newData as Video[]);
       else if (type === 'article') setArticles(newData as Article[]);
     } catch (error) {
-      alert("Failed to delete item. Make sure the backend server (npm run server) is running.");
+      alert("Failed to delete item from Firebase. Please check your internet connection.");
       console.error(error);
     }
   };
