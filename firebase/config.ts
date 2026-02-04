@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
+import { getDatabase } from 'firebase/database';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -10,7 +11,8 @@ const firebaseConfig = {
     storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "insight-sharing-a16eb.firebasestorage.app",
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "28555261482",
     appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:28555261482:web:6dff42dadd8e8c8545f553",
-    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-Z8KKLY2TVY"
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-Z8KKLY2TVY",
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || "https://insight-sharing-a16eb-default-rtdb.firebaseio.com"
 };
 
 // Initialize Firebase
@@ -18,6 +20,9 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 export const db = getFirestore(app);
+
+// Initialize Realtime Database
+export const rtdb = getDatabase(app);
 
 // Initialize Analytics (optional, only in production)
 let analytics;
