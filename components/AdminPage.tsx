@@ -229,9 +229,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
       setLoginStep('verification');
       console.log(`[Admin Security] Code: ${code}`);
 
+      // Determine email to "send" to
+      const targetEmail = username.trim().toLowerCase() === 'admin' ? 'englishtips729@gmail.com' : username;
+
       // Simulate Email Sending
       setTimeout(() => {
-        alert(`(Simulation) Verification code sent to ${username}:\n\nCode: ${code}`);
+        alert(`(Simulation) Verification code sent to ${targetEmail}:\n\nCode: ${code}\n\n(In a production app, this would be emailed via SendGrid/EmailJS)`);
       }, 500);
     } else {
       setLoginError('Invalid credentials');

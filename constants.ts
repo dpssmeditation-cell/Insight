@@ -2,8 +2,8 @@
 import { Book, Video, Artist, Audio, Category, Article } from './types';
 
 export const CATEGORIES: Category[] = ['All', 'History', 'Philosophy', 'Culture', 'Arts', 'Biography', 'Buddhism'];
-export const VIDEO_CATEGORIES = ['All', 'Documentary', 'Performance', 'Interview', 'Shorts'];
-export const AUDIO_CATEGORIES = ['All', 'Symphony', 'Instrumental', 'Vocal', 'Podcast'];
+export const VIDEO_CATEGORIES = ['All', 'Documentary', 'Performance', 'Interview', 'Shorts', 'Dhamma Talks'];
+export const AUDIO_CATEGORIES = ['All', 'Symphony', 'Instrumental', 'Vocal', 'Podcast', 'Dhamma Talks'];
 
 export const ARTICLES: Article[] = [
   {
@@ -285,6 +285,7 @@ export const UI_STRINGS = {
     arts: 'Arts',
     biography: 'Biography',
     buddhism: 'Buddhism',
+    dhammaTalks: 'Dhamma Talks',
     donateHeader: 'Support Insight Sharing',
     donateDesc: 'Your contribution helps us preserve five millennia of wisdom and bring it to a global audience.',
     oneTime: 'One-time',
@@ -362,6 +363,7 @@ export const UI_STRINGS = {
     arts: '艺术',
     biography: '传记',
     buddhism: '佛家',
+    dhammaTalks: '法谈',
     donateHeader: '支持 Insight Sharing',
     donateDesc: '您的捐助将帮助我们保护五千年的智慧，并将其推向全球观众。',
     oneTime: '一次性',
@@ -439,6 +441,7 @@ export const UI_STRINGS = {
     arts: 'សិល្បៈ',
     biography: 'ជីវប្រវត្តិ',
     buddhism: 'ព្រះពុទ្ធសាសនា',
+    dhammaTalks: 'ធម្មទេសនា',
     donateHeader: 'គាំទ្រ Insight Sharing',
     donateDesc: 'ការចូលរួមរបស់អ្នកជួយថែរក្សាប្រាជ្ញារាប់ពាន់ឆ្នាំ និងនាំយកវាទៅកាន់ពិភពលោក។',
     oneTime: 'ម្ដង',

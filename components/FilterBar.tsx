@@ -19,6 +19,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ selectedCategory, onSelect
       case 'Culture': return t.culture;
       case 'Arts': return t.arts;
       case 'Biography': return t.biography;
+      case 'Dhamma Talks': return t.dhammaTalks;
       default: return cat;
     }
   };

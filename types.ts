@@ -1,5 +1,5 @@
 
-export type Category = 'All' | 'History' | 'Philosophy' | 'Culture' | 'Arts' | 'Biography' | 'Buddhism';
+export type Category = 'All' | 'History' | 'Philosophy' | 'Culture' | 'Arts' | 'Biography' | 'Buddhism' | 'Dhamma Talks';
 
 export interface Book {
   id: string;
