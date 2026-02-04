@@ -254,7 +254,10 @@ const App: React.FC = () => {
 
             <BookGrid
               books={displayedBooks}
-              onBookClick={setSelectedBook}
+              onBookClick={(book) => {
+                firebaseService.incrementView('books', book.id);
+                setSelectedBook(book);
+              }}
               language={language}
             />
 

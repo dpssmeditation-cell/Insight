@@ -3,6 +3,7 @@ import { VIDEO_CATEGORIES, UI_STRINGS } from '../constants';
 import { VideoCard } from './VideoCard';
 import { VideoPlayerModal } from './VideoPlayerModal';
 import { Language, Video } from '../types';
+import { firebaseService } from '../services/firebaseService';
 
 const INITIAL_VISIBLE_COUNT = 4;
 const LOAD_MORE_INCREMENT = 4;
@@ -61,6 +62,7 @@ export const MultimediaPage: React.FC<MultimediaPageProps> = ({ language, videos
                         video={video}
                         language={language}
                         onPlay={(video) => {
+                            firebaseService.incrementView('videos', video.id);
                             setPlayingVideo(video);
                             if (onVideoPlay) onVideoPlay(video);
                         }}

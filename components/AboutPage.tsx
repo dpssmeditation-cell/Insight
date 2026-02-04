@@ -2,6 +2,7 @@
 // Added missing React import to resolve "Cannot find namespace 'React'" error.
 import React, { useState, useMemo } from 'react';
 import { ARTIST_PROFILES, UI_STRINGS } from '../constants';
+import { firebaseService } from '../services/firebaseService';
 import { ArtistCard } from './ArtistCard';
 import { ArtistModal } from './ArtistModal';
 import { BookModal } from './BookModal';
@@ -204,18 +205,22 @@ export const AboutPage: React.FC<AboutPageProps> = ({
                     onClose={() => setSelectedArtist(null)}
                     language={language}
                     onAudioClick={(a) => {
+                        firebaseService.incrementView('audios', a.id);
                         setSelectedAudio(a);
                         if (onAudioPlay) onAudioPlay(a);
                     }}
                     onBookClick={(b) => {
+                        firebaseService.incrementView('books', b.id);
                         setSelectedBook(b);
                         if (onBookClick) onBookClick(b);
                     }}
                     onVideoClick={(v) => {
+                        firebaseService.incrementView('videos', v.id);
                         setSelectedVideo(v);
                         if (onVideoPlay) onVideoPlay(v);
                     }}
                     onArticleClick={(art) => {
+                        firebaseService.incrementView('articles', art.id);
                         setSelectedArticle(art);
                         if (onArticleClick) onArticleClick(art);
                     }}

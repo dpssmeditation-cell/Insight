@@ -4,6 +4,7 @@ import { UI_STRINGS, CATEGORIES } from '../constants';
 import { ArticleCard } from './ArticleCard';
 import { Pagination } from './Pagination';
 import { ArticleModal } from './ArticleModal';
+import { firebaseService } from '../services/firebaseService';
 
 interface ArticlesPageProps {
   language: Language;
@@ -77,6 +78,7 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({ language, articles, 
             article={article}
             language={language}
             onClick={(article) => {
+              firebaseService.incrementView('articles', article.id);
               setSelectedArticle(article);
               if (onArticleClick) onArticleClick(article);
             }}

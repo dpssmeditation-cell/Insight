@@ -8,7 +8,8 @@ import {
     deleteDoc,
     setDoc,
     query,
-    orderBy
+    orderBy,
+    increment
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { Book, Article, Audio, Video, Artist } from '../types';
@@ -86,4 +87,15 @@ export const firebaseService = {
     getArtists: () => firebaseService.getAll<Artist>('artists'),
     saveArtist: (artist: Artist) => firebaseService.save<Artist>('artists', artist),
     deleteArtist: (id: string) => firebaseService.delete<Artist>('artists', id),
+
+    incrementView: async (collectionName: string, id: string) => {
+        try {
+            const docRef = doc(db, collectionName, id);
+            await updateDoc(docRef, {
+                views: increment(1)
+            });
+        } catch (error) {
+            console.error(`Error incrementing view for ${collectionName}/${id}:`, error);
+        }
+    }
 };

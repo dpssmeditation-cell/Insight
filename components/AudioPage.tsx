@@ -4,6 +4,7 @@ import { AudioCard } from './AudioCard';
 import { AudioPlayerModal } from './AudioPlayerModal';
 import { Pagination } from './Pagination';
 import { Language, Audio } from '../types';
+import { firebaseService } from '../services/firebaseService';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -75,6 +76,7 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios, onAudioP
                         audio={audio}
                         language={language}
                         onPlay={(audio) => {
+                            firebaseService.incrementView('audios', audio.id);
                             setPlayingAudio(audio);
                             if (onAudioPlay) onAudioPlay(audio);
                         }}
