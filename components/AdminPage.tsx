@@ -221,11 +221,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
   // Default values
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim().toLowerCase() === 'admin' && (password.trim() === 'IS2026?' || password.trim() === 'IS2026')) {
+    const validUsernames = ['admin', 'englishtips729@gmail.com'];
+
+    if (validUsernames.includes(username.trim().toLowerCase()) && (password.trim() === 'IS2026?' || password.trim() === 'IS2026')) {
       const code = Math.floor(100000 + Math.random() * 900000).toString();
       setVerificationCode(code);
       setLoginStep('verification');
       console.log(`[Admin Security] Code: ${code}`);
+
+      // Simulate Email Sending
+      setTimeout(() => {
+        alert(`(Simulation) Verification code sent to ${username}:\n\nCode: ${code}`);
+      }, 500);
     } else {
       setLoginError('Invalid credentials');
     }
