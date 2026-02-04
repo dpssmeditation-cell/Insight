@@ -25,6 +25,12 @@ export const firebaseService = {
             querySnapshot.forEach((doc) => {
                 items.push({ id: doc.id, ...doc.data() } as T);
             });
+            // Sort by createdAt desc (newest first)
+            items.sort((a: any, b: any) => {
+                const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                return dateB - dateA;
+            });
             return items;
         } catch (error) {
             console.error(`Error fetching ${collectionName}:`, error);
@@ -39,6 +45,12 @@ export const firebaseService = {
             const items: T[] = [];
             querySnapshot.forEach((doc) => {
                 items.push({ id: doc.id, ...doc.data() } as T);
+            });
+            // Sort by createdAt desc (newest first)
+            items.sort((a: any, b: any) => {
+                const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                return dateB - dateA;
             });
             callback(items);
         }, (error) => {

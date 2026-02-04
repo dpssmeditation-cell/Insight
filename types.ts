@@ -22,6 +22,7 @@ export interface Book {
   views?: number;
   pdfUrl?: string;
   fileSize?: string;
+  createdAt?: string;
 }
 
 export interface Article {
@@ -43,6 +44,7 @@ export interface Article {
   imageUrl: string;
   category: Category;
   views?: number;
+  createdAt?: string;
 }
 
 export interface Video {
@@ -60,6 +62,7 @@ export interface Video {
   presenterZh?: string;
   presenterKh?: string;
   videoUrl?: string;
+  createdAt?: string;
 }
 
 export interface Audio {
@@ -77,6 +80,7 @@ export interface Audio {
   date: string;
   plays: number;
   audioUrl?: string;
+  createdAt?: string;
 }
 
 export interface Artist {
@@ -103,6 +107,7 @@ export interface Artist {
   featuredVideo?: Video;
   featuredArticle?: Article;
   latestActivity?: string; // For sorting by newest
+  createdAt?: string;
 }
 
 export interface ChatMessage {

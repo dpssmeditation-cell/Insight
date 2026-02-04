@@ -124,19 +124,19 @@ const App: React.FC = () => {
 
     try {
       console.log('Seeding Books...');
-      for (const b of BOOKS) await firebaseService.saveBook(b);
+      for (const b of BOOKS) await firebaseService.saveBook({ ...b, createdAt: new Date().toISOString() });
 
       console.log('Seeding Articles...');
-      for (const a of ARTICLES) await firebaseService.saveArticle(a);
+      for (const a of ARTICLES) await firebaseService.saveArticle({ ...a, createdAt: new Date().toISOString() });
 
       console.log('Seeding Audios...');
-      for (const a of AUDIOS) await firebaseService.saveAudio(a);
+      for (const a of AUDIOS) await firebaseService.saveAudio({ ...a, createdAt: new Date().toISOString() });
 
       console.log('Seeding Videos...');
-      for (const v of VIDEOS) await firebaseService.saveVideo(v);
+      for (const v of VIDEOS) await firebaseService.saveVideo({ ...v, createdAt: new Date().toISOString() });
 
       console.log('Seeding Artists...');
-      for (const ar of ARTIST_PROFILES) await firebaseService.saveArtist(ar);
+      for (const ar of ARTIST_PROFILES) await firebaseService.saveArtist({ ...ar, createdAt: new Date().toISOString() });
 
       alert('Database seeded successfully!');
     } catch (error) {
@@ -320,7 +320,7 @@ const App: React.FC = () => {
   };
 
   const handleSaveItem = async (type: 'book' | 'audio' | 'video' | 'article' | 'artist', item: any) => {
-    const finalItem = item.id ? item : { ...item, id: Date.now().toString() };
+    const finalItem = item.id ? item : { ...item, id: Date.now().toString(), createdAt: new Date().toISOString() };
 
     try {
       // Save to Firebase
