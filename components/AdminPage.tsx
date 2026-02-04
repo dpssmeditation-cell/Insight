@@ -285,6 +285,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[AdminPage] Saving item:', activeTab, currentItem);
+    console.log('[AdminPage] Image URL for article:', currentItem.imageUrl);
     onSave(activeTab, currentItem);
     setIsEditing(false);
   };
@@ -328,13 +330,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
         </div>
         <div className="flex gap-4">
           <button onClick={() => setIsAuthenticated(false)} className="px-6 py-3 text-slate-500 font-bold hover:text-slate-800 transition-colors">Logout</button>
-
-          {onSeed && (
-            <button onClick={onSeed} className="px-6 py-3 bg-amber-100 text-amber-900 border border-amber-200 rounded-full font-bold shadow hover:bg-amber-200 transition-all flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
-              Seed Database
-            </button>
-          )}
 
           <button onClick={handleCreate} className="px-8 py-3 bg-green-700 text-white rounded-full font-bold shadow-lg hover:bg-green-800 transition-all flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
@@ -549,11 +544,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
                   </div>
                   <div className="lg:col-span-2 space-y-2">
                     <label className="text-[10px] font-bold uppercase text-slate-400">Asset URL (Cover/Thumbnail)</label>
-                    <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono text-xs" value={currentItem.coverUrl || currentItem.imageUrl || currentItem.thumbnailUrl || ''} onChange={e => {
-                      if (activeTab === 'video') setCurrentItem({ ...currentItem, thumbnailUrl: e.target.value });
-                      else if (activeTab === 'article') setCurrentItem({ ...currentItem, imageUrl: e.target.value });
-                      else setCurrentItem({ ...currentItem, coverUrl: e.target.value });
-                    }} />
+                    <input
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all font-mono text-xs"
+                      placeholder="https://picsum.photos/800/450"
+                      value={
+                        activeTab === 'video' ? (currentItem.thumbnailUrl || '') :
+                          activeTab === 'article' ? (currentItem.imageUrl || '') :
+                            (currentItem.coverUrl || '')
+                      }
+                      onChange={e => {
+                        if (activeTab === 'video') setCurrentItem({ ...currentItem, thumbnailUrl: e.target.value });
+                        else if (activeTab === 'article') setCurrentItem({ ...currentItem, imageUrl: e.target.value });
+                        else setCurrentItem({ ...currentItem, coverUrl: e.target.value });
+                      }}
+                    />
                   </div>
                 </div>
 
