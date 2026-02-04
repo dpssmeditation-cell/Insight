@@ -13,6 +13,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ selectedCategory, onSelect
     const t = UI_STRINGS[language];
     switch (cat) {
       case 'All': return t.all;
+      Case 'Buddhism': return t.buddhism;
       case 'History': return t.history;
       case 'Philosophy': return t.philosophy;
       case 'Culture': return t.culture;
