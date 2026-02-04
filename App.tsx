@@ -16,11 +16,10 @@ import { DonationPage } from './components/DonationPage';
 import { AdminPage } from './components/AdminPage';
 import { ProfilePage } from './components/ProfilePage';
 import { MyLibraryPage } from './components/MyLibraryPage';
-import { Book, Category, Language, ViewState, Audio, Video, User, Article } from './types';
+import { Book, Category, Language, ViewState, Audio, Video, User, Article, Artist } from './types';
 import { UI_STRINGS } from './constants';
 import { authService } from './services/authService';
 import { firebaseService } from './services/firebaseService';
-import { presenceService } from './services/presenceService';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -41,13 +40,13 @@ const App: React.FC = () => {
   });
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [viewerCount, setViewerCount] = useState<number>(0);
 
   // Initialize state from Database Service
   const [books, setBooks] = useState<Book[]>([]);
   const [audios, setAudios] = useState<Audio[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
+  const [artists, setArtists] = useState<Artist[]>([]);
 
   const t = UI_STRINGS[language];
 
@@ -58,16 +57,18 @@ const App: React.FC = () => {
 
     const loadData = async () => {
       try {
-        const [b, a, v, ar] = await Promise.all([
+        const [b, a, v, ar, art] = await Promise.all([
           firebaseService.getBooks(),
           firebaseService.getAudios(),
           firebaseService.getVideos(),
-          firebaseService.getArticles()
+          firebaseService.getArticles(),
+          firebaseService.getArtists()
         ]);
         setBooks(b);
         setAudios(a);
         setVideos(v);
         setArticles(ar);
+        setArtists(art);
       } catch (error) {
         console.error('Error loading data from Firebase:', error);
         // Fallback to empty arrays if Firebase fails
@@ -75,24 +76,10 @@ const App: React.FC = () => {
         setAudios([]);
         setVideos([]);
         setArticles([]);
+        setArtists([]);
       }
     };
     loadData();
-  }, []);
-
-  // Track presence
-  useEffect(() => {
-    const presenceUnsub = presenceService.trackPresence();
-
-    // Subscribe to viewer count
-    const countUnsub = presenceService.subscribeToViewerCount((count) => {
-      setViewerCount(count);
-    });
-
-    return () => {
-      presenceUnsub();
-      countUnsub();
-    };
   }, []);
 
   useEffect(() => {
@@ -173,44 +160,6 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleBookClick = (book: Book) => {
-    setSelectedBook(book);
-
-    // Optimistic update
-    setBooks(prevBooks => prevBooks.map(b =>
-      b.id === book.id ? { ...b, views: (b.views || 0) + 1 } : b
-    ));
-
-    firebaseService.incrementView('books', book.id);
-  };
-
-  const handleArticleClick = (article: Article) => {
-    // Optimistic update
-    setArticles(prev => prev.map(a =>
-      a.id === article.id ? { ...a, views: (a.views || 0) + 1 } : a
-    ));
-
-    firebaseService.incrementView('articles', article.id);
-  };
-
-  const handleAudioPlay = (audio: Audio) => {
-    // Optimistic update
-    setAudios(prev => prev.map(a =>
-      a.id === audio.id ? { ...a, plays: (a.plays || 0) + 1 } : a
-    ));
-
-    firebaseService.incrementView('audios', audio.id);
-  };
-
-  const handleVideoPlay = (video: Video) => {
-    // Optimistic update
-    setVideos(prev => prev.map(v =>
-      v.id === video.id ? { ...v, views: (v.views || 0) + 1 } : v
-    ));
-
-    firebaseService.incrementView('videos', video.id);
-  };
-
   const handleReadBook = (book: Book) => {
     addToHistory(book.id, 'book');
     setReadingBook(book);
@@ -226,6 +175,7 @@ const App: React.FC = () => {
             audios={audios}
             videos={videos}
             articles={articles}
+            artists={artists}
             language={language}
             onSave={handleSaveItem}
             onDelete={handleDeleteItem}
@@ -255,26 +205,13 @@ const App: React.FC = () => {
           <div className="text-center py-20 dark:text-slate-300">Please log in to view library.</div>
         );
       case 'articles':
-        return <ArticlesPage language={language} articles={articles} onArticleClick={handleArticleClick} />;
+        return <ArticlesPage language={language} articles={articles} />;
       case 'multimedia':
-        return <MultimediaPage language={language} videos={videos} onVideoPlay={handleVideoPlay} />;
+        return <MultimediaPage language={language} videos={videos} />;
       case 'about':
-        return (
-          <AboutPage
-            language={language}
-            onRead={handleReadBook}
-            onBookClick={handleBookClick}
-            onArticleClick={handleArticleClick}
-            onAudioPlay={handleAudioPlay}
-            onVideoPlay={handleVideoPlay}
-            books={books}
-            audios={audios}
-            videos={videos}
-            articles={articles}
-          />
-        );
+        return <AboutPage language={language} onRead={handleReadBook} books={books} audios={audios} videos={videos} articles={articles} />;
       case 'audio':
-        return <AudioPage language={language} audios={audios} onAudioPlay={handleAudioPlay} />;
+        return <AudioPage language={language} audios={audios} />;
       case 'donate':
         return <DonationPage language={language} />;
       case 'books':
@@ -317,7 +254,7 @@ const App: React.FC = () => {
 
             <BookGrid
               books={displayedBooks}
-              onBookClick={handleBookClick}
+              onBookClick={setSelectedBook}
               language={language}
             />
 
@@ -331,7 +268,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSaveItem = async (type: 'book' | 'audio' | 'video' | 'article', item: any) => {
+  const handleSaveItem = async (type: 'book' | 'audio' | 'video' | 'article' | 'artist', item: any) => {
     const finalItem = item.id ? item : { ...item, id: Date.now().toString() };
 
     try {
@@ -341,19 +278,21 @@ const App: React.FC = () => {
       else if (type === 'audio') newData = await firebaseService.saveAudio(finalItem);
       else if (type === 'video') newData = await firebaseService.saveVideo(finalItem);
       else if (type === 'article') newData = await firebaseService.saveArticle(finalItem);
+      else if (type === 'artist') newData = await firebaseService.saveArtist(finalItem);
 
       // Refresh relevant state
       if (type === 'book') setBooks(newData as Book[]);
       else if (type === 'audio') setAudios(newData as Audio[]);
       else if (type === 'video') setVideos(newData as Video[]);
       else if (type === 'article') setArticles(newData as Article[]);
+      else if (type === 'artist') setArtists(newData as Artist[]);
     } catch (error) {
       alert("Failed to save item to Firebase. Please check your internet connection.");
       console.error(error);
     }
   };
 
-  const handleDeleteItem = async (type: 'book' | 'audio' | 'video' | 'article', id: string) => {
+  const handleDeleteItem = async (type: 'book' | 'audio' | 'video' | 'article' | 'artist', id: string) => {
     try {
       // Delete from Firebase
       let newData;
@@ -361,12 +300,14 @@ const App: React.FC = () => {
       else if (type === 'audio') newData = await firebaseService.deleteAudio(id);
       else if (type === 'video') newData = await firebaseService.deleteVideo(id);
       else if (type === 'article') newData = await firebaseService.deleteArticle(id);
+      else if (type === 'artist') newData = await firebaseService.deleteArtist(id);
 
       // Refresh relevant state
       if (type === 'book') setBooks(newData as Book[]);
       else if (type === 'audio') setAudios(newData as Audio[]);
       else if (type === 'video') setVideos(newData as Video[]);
       else if (type === 'article') setArticles(newData as Article[]);
+      else if (type === 'artist') setArtists(newData as Artist[]);
     } catch (error) {
       alert("Failed to delete item from Firebase. Please check your internet connection.");
       console.error(error);
@@ -391,7 +332,7 @@ const App: React.FC = () => {
         {renderContent()}
       </main>
 
-      <Footer language={language} onNavigate={handleNavigate} viewerCount={viewerCount} />
+      <Footer language={language} onNavigate={handleNavigate} />
 
       {selectedBook && (
         <BookModal

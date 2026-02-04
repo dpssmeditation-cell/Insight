@@ -89,6 +89,7 @@ export interface Artist {
   roleKh?: string;
   bio: string;
   bioZh: string;
+  bioKh?: string;
   imageUrl: string;
   views?: number;
   code?: string;

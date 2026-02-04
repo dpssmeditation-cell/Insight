@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Book, Audio, Video, Language, Category, Article } from '../types';
+import { Book, Audio, Video, Language, Category, Article, Artist } from '../types';
 import { CATEGORIES, VIDEO_CATEGORIES, AUDIO_CATEGORIES } from '../constants';
 
 interface AdminPageProps {
@@ -7,9 +7,10 @@ interface AdminPageProps {
   audios: Audio[];
   videos: Video[];
   articles: Article[];
+  artists: Artist[];
   language: Language;
-  onSave: (type: 'book' | 'audio' | 'video' | 'article', item: any) => void;
-  onDelete: (type: 'book' | 'audio' | 'video' | 'article', id: string) => void;
+  onSave: (type: 'book' | 'audio' | 'video' | 'article' | 'artist', item: any) => void;
+  onDelete: (type: 'book' | 'audio' | 'video' | 'article' | 'artist', id: string) => void;
 }
 
 /**
@@ -199,7 +200,7 @@ const ToolbarButton: React.FC<{ onClick: () => void; icon: React.ReactNode; titl
   </button>
 );
 
-export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, articles, language, onSave, onDelete }) => {
+export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, articles, artists, language, onSave, onDelete }) => {
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -212,7 +213,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
   const [inputCode, setInputCode] = useState('');
 
   // Dashboard State
-  const [activeTab, setActiveTab] = useState<'book' | 'audio' | 'video' | 'article'>('book');
+  const [activeTab, setActiveTab] = useState<'book' | 'audio' | 'video' | 'article' | 'artist'>('book');
   const [isEditing, setIsEditing] = useState(false);
   const [currentItem, setCurrentItem] = useState<any>(null);
 
@@ -246,6 +247,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
       author: '', authorZh: '', authorKh: '',
       artist: '', artistZh: '', artistKh: '',
       presenter: '', presenterZh: '', presenterKh: '',
+      // Artist-specific fields
+      name: '', nameZh: '', nameKh: '',
+      role: '', roleZh: '', roleKh: '',
+      bio: '', bioZh: '',
       // Visuals
       imageUrl: 'https://picsum.photos/800/450',
       coverUrl: 'https://picsum.photos/300/400',
@@ -321,7 +326,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
 
       <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
         <div className="flex bg-slate-50/50 p-1">
-          {['book', 'article', 'audio', 'video'].map(tab => (
+          {['book', 'article', 'audio', 'video', 'artist'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
@@ -343,19 +348,19 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
               </tr>
             </thead>
             <tbody>
-              {(activeTab === 'book' ? books : activeTab === 'article' ? articles : activeTab === 'audio' ? audios : videos).map((item: any) => (
+              {(activeTab === 'book' ? books : activeTab === 'article' ? articles : activeTab === 'audio' ? audios : activeTab === 'video' ? videos : artists).map((item: any) => (
                 <tr key={item.id} className="group border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
                   <td className="p-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-14 bg-slate-100 rounded flex-shrink-0 overflow-hidden shadow-sm">
                         <img src={item.coverUrl || item.imageUrl || item.thumbnailUrl} className="w-full h-full object-cover" />
                       </div>
-                      <span className="font-bold text-slate-800">{item.title}</span>
+                      <span className="font-bold text-slate-800">{item.title || item.name}</span>
                     </div>
                   </td>
-                  <td className="p-6 text-sm text-slate-600">{item.author || item.artist || item.presenter}</td>
+                  <td className="p-6 text-sm text-slate-600">{item.author || item.artist || item.presenter || item.role}</td>
                   <td className="p-6">
-                    <span className="text-[10px] font-bold uppercase px-2 py-1 bg-slate-100 rounded text-slate-500">{item.category}</span>
+                    <span className="text-[10px] font-bold uppercase px-2 py-1 bg-slate-100 rounded text-slate-500">{item.category || item.role}</span>
                   </td>
                   <td className="p-6 text-right">
                     <button onClick={() => { setCurrentItem({ ...item }); setIsEditing(true); }} className="p-2 text-slate-400 hover:text-amber-900 hover:bg-amber-50 rounded-full transition-all">
@@ -404,6 +409,75 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
                   </div>
                 </div>
               </section>
+
+              {/* Artist-specific fields */}
+              {activeTab === 'artist' && (
+                <>
+                  <section className="space-y-6">
+                    <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">2. Author/Artist Names</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">English Name</label>
+                        <input required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all" value={currentItem.name || ''} onChange={e => setCurrentItem({ ...currentItem, name: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Chinese Name</label>
+                        <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all chinese-text" value={currentItem.nameZh || ''} onChange={e => setCurrentItem({ ...currentItem, nameZh: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Khmer Name</label>
+                        <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all khmer-text font-serif" value={currentItem.nameKh || ''} onChange={e => setCurrentItem({ ...currentItem, nameKh: e.target.value })} />
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="space-y-6">
+                    <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">3. Role/Profession</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">English Role</label>
+                        <input required className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all" placeholder="e.g., Author, Composer, Presenter" value={currentItem.role || ''} onChange={e => setCurrentItem({ ...currentItem, role: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Chinese Role</label>
+                        <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all chinese-text" placeholder="例如：作者、作曲家" value={currentItem.roleZh || ''} onChange={e => setCurrentItem({ ...currentItem, roleZh: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Khmer Role</label>
+                        <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all khmer-text font-serif" value={currentItem.roleKh || ''} onChange={e => setCurrentItem({ ...currentItem, roleKh: e.target.value })} />
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="space-y-10">
+                    <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">4. Biography (Rich Text)</h3>
+
+                    <div className="space-y-4">
+                      <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">EN</span>
+                        English Biography
+                      </label>
+                      <RichTextEditor value={currentItem.bio || ''} onChange={val => setCurrentItem({ ...currentItem, bio: val })} />
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">ZH</span>
+                        Chinese Biography (中文简介)
+                      </label>
+                      <RichTextEditor lang="zh" value={currentItem.bioZh || ''} onChange={val => setCurrentItem({ ...currentItem, bioZh: val })} />
+                    </div>
+                  </section>
+
+                  <section className="space-y-6">
+                    <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">5. Profile Image</h3>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase text-slate-400">Image URL</label>
+                      <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all font-mono text-xs" placeholder="https://example.com/profile.jpg" value={currentItem.imageUrl || ''} onChange={e => setCurrentItem({ ...currentItem, imageUrl: e.target.value })} />
+                    </div>
+                  </section>
+                </>
+              )}
 
               {/* Advanced Rich Text Content Editors */}
               {activeTab === 'article' && (

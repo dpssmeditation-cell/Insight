@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getDatabase } from 'firebase/database';
 import { getAnalytics } from 'firebase/analytics';
 
 // Firebase configuration
@@ -19,9 +18,6 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 export const db = getFirestore(app);
-
-// Initialize Realtime Database
-export const rtdb = getDatabase(app);
 
 // Initialize Analytics (optional, only in production)
 let analytics;
