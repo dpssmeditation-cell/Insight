@@ -14,22 +14,37 @@ const INITIAL_VISIBLE_COUNT = 8;
 const LOAD_MORE_INCREMENT = 4;
 
 interface AboutPageProps {
-  language: Language;
-  onRead: (book: Book) => void;
-  books: Book[];
-  audios: Audio[];
-  videos: Video[];
-  articles: Article[];
+    language: Language;
+    onRead: (book: Book) => void;
+    onBookClick?: (book: Book) => void;
+    onArticleClick?: (article: Article) => void;
+    onAudioPlay?: (audio: Audio) => void;
+    onVideoPlay?: (video: Video) => void;
+    books: Book[];
+    audios: Audio[];
+    videos: Video[];
+    articles: Article[];
 }
 
-export const AboutPage: React.FC<AboutPageProps> = ({ language, onRead, books, audios, videos, articles }) => {
+export const AboutPage: React.FC<AboutPageProps> = ({
+    language,
+    onRead,
+    onBookClick,
+    onArticleClick,
+    onAudioPlay,
+    onVideoPlay,
+    books,
+    audios,
+    videos,
+    articles
+}) => {
     const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
     const [selectedBook, setSelectedBook] = useState<Book | null>(null);
     const [selectedAudio, setSelectedAudio] = useState<Audio | null>(null);
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
     const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
-    
+
     const t = UI_STRINGS[language];
 
     // Compute all artists dynamically based on ALL current content, sorting by newest activity
@@ -60,21 +75,21 @@ export const AboutPage: React.FC<AboutPageProps> = ({ language, onRead, books, a
                     views: 0,
                     latestActivity: date || '1970-01-01'
                 };
-                
+
                 // If it's a seed profile, enhance with details
                 const seed = ARTIST_PROFILES.find(p => p.name === name);
                 if (seed) {
                     artist = { ...artist, ...seed };
                 }
-                
+
                 artistMap.set(name, artist);
             }
-            
+
             // Update latest activity if current item date is newer
             if (date && date > (artist.latestActivity || '')) {
                 artist.latestActivity = date;
             }
-            
+
             return artist;
         };
 
@@ -146,9 +161,9 @@ export const AboutPage: React.FC<AboutPageProps> = ({ language, onRead, books, a
                     {language === 'zh' ? '作者与艺术家' : (language === 'kh' ? 'សិល្បករ និងអ្នកចូលរួម' : 'Authors & Artists')}
                 </h1>
                 <p className={`text-slate-500 dark:text-slate-400 font-serif italic text-lg max-w-3xl mx-auto leading-relaxed ${language === 'zh' ? 'chinese-text' : ''}`}>
-                    {language === 'zh' 
-                      ? '结识致力于复兴五千年神传文化的杰出人才。探索按最新贡献排序的完整贡献者目录。'
-                      : 'Meet the talented individuals reviving traditional culture. Explore our full directory of contributors, sorted by their most recent work.'}
+                    {language === 'zh'
+                        ? '结识致力于复兴五千年神传文化的杰出人才。探索按最新贡献排序的完整贡献者目录。'
+                        : 'Meet the talented individuals reviving traditional culture. Explore our full directory of contributors, sorted by their most recent work.'}
                 </p>
             </div>
 
@@ -161,14 +176,14 @@ export const AboutPage: React.FC<AboutPageProps> = ({ language, onRead, books, a
             </div>
 
             {visibleCount < allArtists.length && (
-                 <div className="mt-12 text-center">
-                    <button 
+                <div className="mt-12 text-center">
+                    <button
                         onClick={handleLoadMore}
                         className="px-6 py-2 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-full hover:border-amber-900 dark:hover:border-amber-500 hover:text-amber-900 dark:hover:text-amber-500 transition-colors font-medium text-sm"
                     >
                         {t.loadMore}
                     </button>
-                 </div>
+                </div>
             )}
 
             <div className="mt-20 py-16 bg-slate-50 dark:bg-slate-800/50 rounded-xl text-center px-4">
@@ -184,14 +199,26 @@ export const AboutPage: React.FC<AboutPageProps> = ({ language, onRead, books, a
             </div>
 
             {selectedArtist && (
-                <ArtistModal 
-                    artist={selectedArtist} 
-                    onClose={() => setSelectedArtist(null)} 
+                <ArtistModal
+                    artist={selectedArtist}
+                    onClose={() => setSelectedArtist(null)}
                     language={language}
-                    onAudioClick={(a) => setSelectedAudio(a)}
-                    onBookClick={(b) => setSelectedBook(b)}
-                    onVideoClick={(v) => setSelectedVideo(v)}
-                    onArticleClick={(art) => setSelectedArticle(art)}
+                    onAudioClick={(a) => {
+                        setSelectedAudio(a);
+                        if (onAudioPlay) onAudioPlay(a);
+                    }}
+                    onBookClick={(b) => {
+                        setSelectedBook(b);
+                        if (onBookClick) onBookClick(b);
+                    }}
+                    onVideoClick={(v) => {
+                        setSelectedVideo(v);
+                        if (onVideoPlay) onVideoPlay(v);
+                    }}
+                    onArticleClick={(art) => {
+                        setSelectedArticle(art);
+                        if (onArticleClick) onArticleClick(art);
+                    }}
                 />
             )}
 
