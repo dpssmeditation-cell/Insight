@@ -549,11 +549,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
                   </div>
                   <div className="lg:col-span-2 space-y-2">
                     <label className="text-[10px] font-bold uppercase text-slate-400">Asset URL (Cover/Thumbnail)</label>
-                    <input className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-mono text-xs" value={currentItem.coverUrl || currentItem.imageUrl || currentItem.thumbnailUrl || ''} onChange={e => {
-                      if (activeTab === 'video') setCurrentItem({ ...currentItem, thumbnailUrl: e.target.value });
-                      else if (activeTab === 'article') setCurrentItem({ ...currentItem, imageUrl: e.target.value });
-                      else setCurrentItem({ ...currentItem, coverUrl: e.target.value });
-                    }} />
+                    <input
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all font-mono text-xs"
+                      placeholder="https://picsum.photos/800/450"
+                      value={
+                        activeTab === 'video' ? (currentItem.thumbnailUrl || '') :
+                          activeTab === 'article' ? (currentItem.imageUrl || '') :
+                            (currentItem.coverUrl || '')
+                      }
+                      onChange={e => {
+                        if (activeTab === 'video') setCurrentItem({ ...currentItem, thumbnailUrl: e.target.value });
+                        else if (activeTab === 'article') setCurrentItem({ ...currentItem, imageUrl: e.target.value });
+                        else setCurrentItem({ ...currentItem, coverUrl: e.target.value });
+                      }}
+                    />
                   </div>
                 </div>
 
