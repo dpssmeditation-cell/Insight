@@ -285,6 +285,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[AdminPage] Saving item:', activeTab, currentItem);
+    console.log('[AdminPage] Image URL for article:', currentItem.imageUrl);
     onSave(activeTab, currentItem);
     setIsEditing(false);
   };
