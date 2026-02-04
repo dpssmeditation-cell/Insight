@@ -17,7 +17,7 @@ import { AdminPage } from './components/AdminPage';
 import { ProfilePage } from './components/ProfilePage';
 import { MyLibraryPage } from './components/MyLibraryPage';
 import { Book, Category, Language, ViewState, Audio, Video, User, Article, Artist } from './types';
-import { UI_STRINGS } from './constants';
+import { UI_STRINGS, BOOKS, ARTICLES, AUDIOS, VIDEOS, ARTIST_PROFILES } from './constants';
 import { authService } from './services/authService';
 import { firebaseService } from './services/firebaseService';
 
@@ -119,6 +119,32 @@ const App: React.FC = () => {
     handleUpdateUser(updatedUser);
   };
 
+  const handleSeed = async () => {
+    if (!confirm('Are you sure you want to seed the database? This might duplicate data if run multiple times.')) return;
+
+    try {
+      console.log('Seeding Books...');
+      for (const b of BOOKS) await firebaseService.saveBook(b);
+
+      console.log('Seeding Articles...');
+      for (const a of ARTICLES) await firebaseService.saveArticle(a);
+
+      console.log('Seeding Audios...');
+      for (const a of AUDIOS) await firebaseService.saveAudio(a);
+
+      console.log('Seeding Videos...');
+      for (const v of VIDEOS) await firebaseService.saveVideo(v);
+
+      console.log('Seeding Artists...');
+      for (const ar of ARTIST_PROFILES) await firebaseService.saveArtist(ar);
+
+      alert('Database seeded successfully!');
+    } catch (error) {
+      console.error('Error seeding database:', error);
+      alert('Failed to seed database. Check console for details.');
+    }
+  };
+
   const filteredBooks = books.filter((book) => {
     const matchesCategory = selectedCategory === 'All' || book.category === selectedCategory;
     const matchesSearch =
@@ -168,6 +194,7 @@ const App: React.FC = () => {
             language={language}
             onSave={handleSaveItem}
             onDelete={handleDeleteItem}
+            onSeed={handleSeed}
           />
         );
       case 'profile':
