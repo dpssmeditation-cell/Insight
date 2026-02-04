@@ -4,4 +4,104 @@
 
 /* Additional custom styles for Insight Sharing Digital Library */
 
-/* You can add any custom CSS here that isn't covered by Tailwind */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #fcfcfc;
+    transition: background-color 0.3s ease;
+}
+
+.dark body {
+    background-color: #0f172a;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.serif {
+    font-family: 'Merriweather', serif;
+}
+
+.chinese-text {
+    font-family: 'Noto Sans SC', sans-serif;
+}
+
+.khmer-text {
+    font-family: 'Noto Serif Khmer', serif;
+}
+
+/* Custom scrollbar for chat */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar {
+    width: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 5px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.animate-scale-in {
+    animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
