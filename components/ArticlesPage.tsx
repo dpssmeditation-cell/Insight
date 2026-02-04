@@ -10,17 +10,37 @@ interface ArticlesPageProps {
   language: Language;
   articles: Article[];
   onArticleClick?: (article: Article) => void;
+  initialId?: string | null;
 }
 
 const ARTICLES_PER_PAGE = 6;
 
-export const ArticlesPage: React.FC<ArticlesPageProps> = ({ language, articles, onArticleClick }) => {
+export const ArticlesPage: React.FC<ArticlesPageProps> = ({ language, articles, onArticleClick, initialId }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const t = UI_STRINGS[language];
 
   const filteredArticles = articles.filter(a => selectedCategory === 'All' || a.category === selectedCategory);
+
+  // Sync state to URL and handle initial ID
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (selectedArticle) {
+      params.set('id', selectedArticle.id);
+    } else {
+      params.delete('id');
+    }
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+  }, [selectedArticle]);
+
+  useEffect(() => {
+    if (initialId && articles.length > 0) {
+      const article = articles.find(a => a.id === initialId);
+      if (article) setSelectedArticle(article);
+    }
+  }, [initialId, articles.length]);
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredArticles.length / ARTICLES_PER_PAGE);

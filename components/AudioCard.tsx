@@ -12,15 +12,16 @@ export const AudioCard: React.FC<AudioCardProps> = ({ audio, language, onPlay })
     e.stopPropagation();
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
     const baseUrl = isLocal ? 'https://insightsharing.org' : (window.location.origin + window.location.pathname);
+    const shareLink = `${baseUrl}?v=audio&id=${audio.id}`;
     const title = language === 'zh' ? audio.titleZh : audio.title;
     const artist = language === 'zh' ? audio.artistZh : audio.artist;
     const text = language === 'zh' ? `收听 ${artist} 的《${title}》` : `Listen to "${title}" by ${artist} on Insight Sharing Digital Library`;
 
     let shareUrl = '';
     switch (platform) {
-      case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(baseUrl)}`; break;
-      case 'twitter': shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(baseUrl)}&text=${encodeURIComponent(text)}`; break;
-      case 'telegram': shareUrl = `https://t.me/share/url?url=${encodeURIComponent(baseUrl)}&text=${encodeURIComponent(text)}`; break;
+      case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`; break;
+      case 'twitter': shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`; break;
+      case 'telegram': shareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`; break;
     }
     window.open(shareUrl, '_blank', 'width=600,height=400');
   };

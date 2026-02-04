@@ -12,9 +12,10 @@ interface MultimediaPageProps {
     language: Language;
     videos: Video[];
     onVideoPlay?: (video: Video) => void;
+    initialId?: string | null;
 }
 
-export const MultimediaPage: React.FC<MultimediaPageProps> = ({ language, videos, onVideoPlay }) => {
+export const MultimediaPage: React.FC<MultimediaPageProps> = ({ language, videos, onVideoPlay, initialId }) => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [playingVideo, setPlayingVideo] = useState<Video | null>(null);
     const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
@@ -23,6 +24,25 @@ export const MultimediaPage: React.FC<MultimediaPageProps> = ({ language, videos
 
     const filteredVideos = videos.filter(v => selectedCategory === 'All' || v.category === selectedCategory);
     const visibleVideos = filteredVideos.slice(0, visibleCount);
+
+    // Sync state to URL and handle initial ID
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (playingVideo) {
+            params.set('id', playingVideo.id);
+        } else {
+            params.delete('id');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, '', newUrl);
+    }, [playingVideo]);
+
+    useEffect(() => {
+        if (initialId && videos.length > 0) {
+            const video = videos.find(v => v.id === initialId);
+            if (video) setPlayingVideo(video);
+        }
+    }, [initialId, videos.length]);
 
     const handleLoadMore = () => {
         setVisibleCount(prev => prev + LOAD_MORE_INCREMENT);

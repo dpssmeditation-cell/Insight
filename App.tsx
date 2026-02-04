@@ -165,6 +165,38 @@ const App: React.FC = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
+  // URL Deep Linking Logic
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('v') as ViewState;
+    const id = params.get('id');
+
+    if (view && ['books', 'articles', 'multimedia', 'about', 'audio', 'donate', 'admin', 'profile', 'my-library'].includes(view)) {
+      setCurrentView(view);
+
+      // Special handling for books on home page
+      if (view === 'books' && id && books.length > 0) {
+        const book = books.find(b => b.id === id);
+        if (book) setSelectedBook(book);
+      }
+    }
+  }, [books.length]);
+
+  // Sync state to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set('v', currentView);
+
+    let id = '';
+    if (currentView === 'books' && selectedBook) id = selectedBook.id;
+    // For other views, IDs are handled by sub-pages, but we can still track them here if needed
+
+    if (id) params.set('id', id);
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+  }, [currentView, selectedBook]);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -221,13 +253,13 @@ const App: React.FC = () => {
           <div className="text-center py-20 dark:text-slate-300">Please log in to view library.</div>
         );
       case 'articles':
-        return <ArticlesPage language={language} articles={articles} />;
+        return <ArticlesPage language={language} articles={articles} initialId={new URLSearchParams(window.location.search).get('id')} />;
       case 'multimedia':
-        return <MultimediaPage language={language} videos={videos} />;
+        return <MultimediaPage language={language} videos={videos} initialId={new URLSearchParams(window.location.search).get('id')} />;
       case 'about':
         return <AboutPage language={language} onRead={handleReadBook} books={books} audios={audios} videos={videos} articles={articles} />;
       case 'audio':
-        return <AudioPage language={language} audios={audios} />;
+        return <AudioPage language={language} audios={audios} initialId={new URLSearchParams(window.location.search).get('id')} />;
       case 'donate':
         return <DonationPage language={language} />;
       case 'books':

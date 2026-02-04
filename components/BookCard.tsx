@@ -33,6 +33,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book, onClick, language }) =
     e.stopPropagation();
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
     const baseUrl = isLocal ? 'https://insightsharing.org' : (window.location.origin + window.location.pathname);
+    const shareLink = `${baseUrl}?v=books&id=${book.id}`;
     const title = getLocalizedTitle();
     const author = getLocalizedAuthor();
     const text = language === 'zh'
@@ -42,13 +43,13 @@ export const BookCard: React.FC<BookCardProps> = ({ book, onClick, language }) =
     let shareUrl = '';
     switch (platform) {
       case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(baseUrl)}`;
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`;
         break;
       case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(baseUrl)}&text=${encodeURIComponent(text)}`;
+        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`;
         break;
       case 'telegram':
-        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(baseUrl)}&text=${encodeURIComponent(text)}`;
+        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`;
         break;
     }
     window.open(shareUrl, '_blank', 'width=600,height=400');

@@ -12,13 +12,33 @@ interface AudioPageProps {
     language: Language;
     audios: Audio[];
     onAudioPlay?: (audio: Audio) => void;
+    initialId?: string | null;
 }
 
-export const AudioPage: React.FC<AudioPageProps> = ({ language, audios, onAudioPlay }) => {
+export const AudioPage: React.FC<AudioPageProps> = ({ language, audios, onAudioPlay, initialId }) => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [playingAudio, setPlayingAudio] = useState<Audio | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const t = UI_STRINGS[language];
+
+    // Sync state to URL and handle initial ID
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (playingAudio) {
+            params.set('id', playingAudio.id);
+        } else {
+            params.delete('id');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, '', newUrl);
+    }, [playingAudio]);
+
+    useEffect(() => {
+        if (initialId && audios.length > 0) {
+            const audio = audios.find(a => a.id === initialId);
+            if (audio) setPlayingAudio(audio);
+        }
+    }, [initialId, audios.length]);
 
     // Reset pagination when category changes
     useEffect(() => {
