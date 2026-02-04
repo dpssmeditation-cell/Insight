@@ -9,7 +9,8 @@ import {
     setDoc,
     query,
     orderBy,
-    increment
+    increment,
+    onSnapshot
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { Book, Article, Audio, Video, Artist } from '../types';
@@ -29,6 +30,20 @@ export const firebaseService = {
             console.error(`Error fetching ${collectionName}:`, error);
             return [];
         }
+    },
+
+    // Real-time subscription
+    subscribe: <T>(collectionName: string, callback: (items: T[]) => void) => {
+        const q = query(collection(db, collectionName));
+        return onSnapshot(q, (querySnapshot) => {
+            const items: T[] = [];
+            querySnapshot.forEach((doc) => {
+                items.push({ id: doc.id, ...doc.data() } as T);
+            });
+            callback(items);
+        }, (error) => {
+            console.error(`Error subscribing to ${collectionName}:`, error);
+        });
     },
 
     // Save (create or update) a document
@@ -69,22 +84,27 @@ export const firebaseService = {
 
     // Specialized methods for each collection
     getBooks: () => firebaseService.getAll<Book>('books'),
+    subscribeBooks: (cb: (items: Book[]) => void) => firebaseService.subscribe<Book>('books', cb),
     saveBook: (book: Book) => firebaseService.save<Book>('books', book),
     deleteBook: (id: string) => firebaseService.delete<Book>('books', id),
 
     getArticles: () => firebaseService.getAll<Article>('articles'),
+    subscribeArticles: (cb: (items: Article[]) => void) => firebaseService.subscribe<Article>('articles', cb),
     saveArticle: (article: Article) => firebaseService.save<Article>('articles', article),
     deleteArticle: (id: string) => firebaseService.delete<Article>('articles', id),
 
     getAudios: () => firebaseService.getAll<Audio>('audios'),
+    subscribeAudios: (cb: (items: Audio[]) => void) => firebaseService.subscribe<Audio>('audios', cb),
     saveAudio: (audio: Audio) => firebaseService.save<Audio>('audios', audio),
     deleteAudio: (id: string) => firebaseService.delete<Audio>('audios', id),
 
     getVideos: () => firebaseService.getAll<Video>('videos'),
+    subscribeVideos: (cb: (items: Video[]) => void) => firebaseService.subscribe<Video>('videos', cb),
     saveVideo: (video: Video) => firebaseService.save<Video>('videos', video),
     deleteVideo: (id: string) => firebaseService.delete<Video>('videos', id),
 
     getArtists: () => firebaseService.getAll<Artist>('artists'),
+    subscribeArtists: (cb: (items: Artist[]) => void) => firebaseService.subscribe<Artist>('artists', cb),
     saveArtist: (artist: Artist) => firebaseService.save<Artist>('artists', artist),
     deleteArtist: (id: string) => firebaseService.delete<Artist>('artists', id),
 

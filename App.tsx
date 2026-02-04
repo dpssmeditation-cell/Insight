@@ -51,35 +51,24 @@ const App: React.FC = () => {
   const t = UI_STRINGS[language];
 
   // Fetch data on load
+  // Subscribe to real-time data
   useEffect(() => {
     const user = authService.getCurrentUser();
     if (user) setCurrentUser(user);
 
-    const loadData = async () => {
-      try {
-        const [b, a, v, ar, art] = await Promise.all([
-          firebaseService.getBooks(),
-          firebaseService.getAudios(),
-          firebaseService.getVideos(),
-          firebaseService.getArticles(),
-          firebaseService.getArtists()
-        ]);
-        setBooks(b);
-        setAudios(a);
-        setVideos(v);
-        setArticles(ar);
-        setArtists(art);
-      } catch (error) {
-        console.error('Error loading data from Firebase:', error);
-        // Fallback to empty arrays if Firebase fails
-        setBooks([]);
-        setAudios([]);
-        setVideos([]);
-        setArticles([]);
-        setArtists([]);
-      }
+    const unsubBooks = firebaseService.subscribeBooks(setBooks);
+    const unsubAudios = firebaseService.subscribeAudios(setAudios);
+    const unsubVideos = firebaseService.subscribeVideos(setVideos);
+    const unsubArticles = firebaseService.subscribeArticles(setArticles);
+    const unsubArtists = firebaseService.subscribeArtists(setArtists);
+
+    return () => {
+      unsubBooks();
+      unsubAudios();
+      unsubVideos();
+      unsubArticles();
+      unsubArtists();
     };
-    loadData();
   }, []);
 
   useEffect(() => {
@@ -101,7 +90,7 @@ const App: React.FC = () => {
   const handleLogout = () => {
     authService.logout();
     setCurrentUser(null);
-    if (currentView === 'profile' || currentView === 'my-library') {
+    if (currentView === 'profile' || currentView === 'my-library' || currentView === 'admin') {
       setCurrentView('books');
     }
   };
