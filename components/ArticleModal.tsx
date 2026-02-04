@@ -64,7 +64,6 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
       <div
         className="absolute inset-0 bg-slate-900/90 backdrop-blur-md animate-fade-in"
-        onClick={onClose}
       />
 
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-y-auto animate-fade-in-up flex flex-col">
