@@ -31,10 +31,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({ selectedCategory, onSelect
           onClick={() => onSelectCategory(category)}
           className={`
             whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-all duration-300
-            ${
-              selectedCategory === category
-                ? 'bg-amber-900 dark:bg-amber-600 text-white shadow-md transform scale-105'
-                : 'bg-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+            ${selectedCategory === category
+              ? 'bg-amber-900 dark:bg-amber-600 text-white shadow-md transform scale-105'
+              : 'bg-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
             }
             ${language === 'zh' ? 'chinese-text' : ''}
           `}

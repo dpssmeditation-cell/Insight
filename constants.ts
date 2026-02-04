@@ -1,7 +1,7 @@
 
 import { Book, Video, Artist, Audio, Category, Article } from './types';
 
-export const CATEGORIES: Category[] = ['All', 'History', 'Philosophy', 'Culture', 'Arts', 'Biography'];
+export const CATEGORIES: Category[] = ['All', 'History', 'Philosophy', 'Culture', 'Arts', 'Biography', 'Buddhism'];
 export const VIDEO_CATEGORIES = ['All', 'Documentary', 'Performance', 'Interview', 'Shorts'];
 export const AUDIO_CATEGORIES = ['All', 'Symphony', 'Instrumental', 'Vocal', 'Podcast'];
 
@@ -284,6 +284,7 @@ export const UI_STRINGS = {
     culture: 'Culture',
     arts: 'Arts',
     biography: 'Biography',
+    buddhism: 'Buddhism',
     donateHeader: 'Support Insight Sharing',
     donateDesc: 'Your contribution helps us preserve five millennia of wisdom and bring it to a global audience.',
     oneTime: 'One-time',
@@ -360,6 +361,7 @@ export const UI_STRINGS = {
     culture: '文化',
     arts: '艺术',
     biography: '传记',
+    buddhism: '佛家',
     donateHeader: '支持 Insight Sharing',
     donateDesc: '您的捐助将帮助我们保护五千年的智慧，并将其推向全球观众。',
     oneTime: '一次性',
@@ -436,6 +438,7 @@ export const UI_STRINGS = {
     culture: 'វប្បធម៌',
     arts: 'សិល្បៈ',
     biography: 'ជីវប្រវត្តិ',
+    buddhism: 'ព្រះពុទ្ធសាសនា',
     donateHeader: 'គាំទ្រ Insight Sharing',
     donateDesc: 'ការចូលរួមរបស់អ្នកជួយថែរក្សាប្រាជ្ញារាប់ពាន់ឆ្នាំ និងនាំយកវាទៅកាន់ពិភពលោក។',
     oneTime: 'ម្ដង',

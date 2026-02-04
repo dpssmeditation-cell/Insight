@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Additional custom styles for Insight Sharing Digital Library */
+
 
 body {
     font-family: 'Inter', sans-serif;
@@ -32,7 +32,7 @@ h6,
     font-family: 'Noto Serif Khmer', serif;
 }
 
-/* Custom scrollbar for chat */
+
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
@@ -42,7 +42,6 @@ h6,
     scrollbar-width: none;
 }
 
-/* Dark mode scrollbar */
 .dark ::-webkit-scrollbar {
     width: 10px;
 }
