@@ -127,15 +127,17 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
         setHighlightedText(word);
         setCurrentWordIndex(charIndex);
 
-        // Remove previous bold highlighting
-        const previousHighlights = document.querySelectorAll('.tts-word-highlight');
-        previousHighlights.forEach(el => {
-          const text = el.textContent || '';
-          const textNode = document.createTextNode(text);
-          if (el.parentNode) {
-            el.parentNode.replaceChild(textNode, el);
-          }
-        });
+        // Remove previous bold highlighting with a delay
+        setTimeout(() => {
+          const previousHighlights = document.querySelectorAll('.tts-word-highlight');
+          previousHighlights.forEach(el => {
+            const text = el.textContent || '';
+            const textNode = document.createTextNode(text);
+            if (el.parentNode) {
+              el.parentNode.replaceChild(textNode, el);
+            }
+          });
+        }, 500); // Keep highlight visible for 500ms
 
         // Apply bold highlighting to current word in the DOM
         if (word.length > 2) { // Only highlight words with 3+ characters
