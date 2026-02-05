@@ -17,6 +17,11 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
   const [noteTimestamp, setNoteTimestamp] = useState<string | null>(null);
   const [showSavedMessage, setShowSavedMessage] = useState(false);
 
+  // TTS State
+  const [isReading, setIsReading] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+
   // Load existing note on mount
   useEffect(() => {
     const notesJson = localStorage.getItem(NOTES_STORAGE_KEY);
@@ -32,6 +37,15 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       }
     }
   }, [article.id]);
+
+  // Cleanup TTS on unmount
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const handleSaveNote = () => {
     try {
@@ -53,6 +67,80 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
     } catch (error) {
       console.error('Error saving note:', error);
       alert('Failed to save note. Please try again.');
+    }
+  };
+
+  // TTS Functions
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('DIV');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
+  const handlePlay = () => {
+    if (!window.speechSynthesis) {
+      alert('Text-to-speech is not supported in your browser.');
+      return;
+    }
+
+    if (isPaused) {
+      window.speechSynthesis.resume();
+      setIsPaused(false);
+      setIsReading(true);
+      return;
+    }
+
+    const title = getLocalizedTitle();
+    const excerpt = getLocalizedExcerpt();
+    const content = getLocalizedContent();
+    const textToRead = `${title}. ${excerpt}. ${stripHtml(content)}`;
+
+    const newUtterance = new SpeechSynthesisUtterance(textToRead);
+
+    // Set language based on current language
+    if (language === 'zh') {
+      newUtterance.lang = 'zh-CN';
+    } else if (language === 'kh') {
+      newUtterance.lang = 'km-KH';
+    } else {
+      newUtterance.lang = 'en-US';
+    }
+
+    newUtterance.rate = 0.9;
+    newUtterance.pitch = 1;
+
+    newUtterance.onstart = () => {
+      setIsReading(true);
+      setIsPaused(false);
+    };
+
+    newUtterance.onend = () => {
+      setIsReading(false);
+      setIsPaused(false);
+    };
+
+    newUtterance.onerror = () => {
+      setIsReading(false);
+      setIsPaused(false);
+    };
+
+    setUtterance(newUtterance);
+    window.speechSynthesis.speak(newUtterance);
+  };
+
+  const handlePause = () => {
+    if (window.speechSynthesis && isReading) {
+      window.speechSynthesis.pause();
+      setIsPaused(true);
+      setIsReading(false);
+    }
+  };
+
+  const handleStop = () => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      setIsReading(false);
+      setIsPaused(false);
     }
   };
 
@@ -298,6 +386,68 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
                 title="Copy link"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+              </button>
+            </div>
+          </div>
+
+          {/* TTS Controls */}
+          <div className="mb-6 flex items-center gap-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+            <span className={`text-sm font-medium text-slate-700 ${language === 'zh' ? 'chinese-text' : ''}`}>
+              {t.listenToArticle}
+            </span>
+
+            {isReading && (
+              <span className="text-xs text-amber-700 font-medium animate-pulse flex items-center gap-1">
+                <span className="w-2 h-2 bg-amber-700 rounded-full"></span>
+                {t.reading}
+              </span>
+            )}
+
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                onClick={handlePlay}
+                disabled={isReading}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${isReading
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    : 'bg-amber-700 hover:bg-amber-800 text-white shadow-sm hover:shadow-md'
+                  } ${language === 'zh' ? 'chinese-text' : ''}`}
+                title={t.play}
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                  {t.play}
+                </div>
+              </button>
+
+              <button
+                onClick={handlePause}
+                disabled={!isReading}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    : 'bg-slate-600 hover:bg-slate-700 text-white shadow-sm hover:shadow-md'
+                  } ${language === 'zh' ? 'chinese-text' : ''}`}
+                title={t.pause}
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" /></svg>
+                  {t.pause}
+                </div>
+              </button>
+
+              <button
+                onClick={handleStop}
+                disabled={!isReading && !isPaused}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading && !isPaused
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    : 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md'
+                  } ${language === 'zh' ? 'chinese-text' : ''}`}
+                title={t.stop}
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z" /></svg>
+                  {t.stop}
+                </div>
               </button>
             </div>
           </div>

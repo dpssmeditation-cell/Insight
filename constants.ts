@@ -337,6 +337,11 @@ export const UI_STRINGS = {
     notePlaceholder: 'Add your personal notes about this article...',
     notesSaved: 'Notes saved!',
     lastUpdated: 'Last updated',
+    listenToArticle: 'Listen to Article',
+    play: 'Play',
+    pause: 'Pause',
+    stop: 'Stop',
+    reading: 'Reading',
   },
   zh: {
     home: '首页',
@@ -420,6 +425,11 @@ export const UI_STRINGS = {
     notePlaceholder: '在此添加您对本文的个人笔记...',
     notesSaved: '笔记已保存！',
     lastUpdated: '最后更新',
+    listenToArticle: '收听文章',
+    play: '播放',
+    pause: '暂停',
+    stop: '停止',
+    reading: '正在朗读',
   },
   kh: {
     home: 'ទំព័រដើម',
@@ -503,5 +513,10 @@ export const UI_STRINGS = {
     notePlaceholder: 'បន្ថែមកំណត់ចំណាំផ្ទាល់ខ្លួនរបស់អ្នកអំពីអត្ថបទនេះ...',
     notesSaved: 'កំណត់ចំណាំត្រូវបានរក្សាទុក!',
     lastUpdated: 'ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ',
+    listenToArticle: 'ស្តាប់អត្ថបទ',
+    play: 'ចាក់',
+    pause: 'ផ្អាក',
+    stop: 'បញ្ឈប់',
+    reading: 'កំពុងអាន',
   }
 };
