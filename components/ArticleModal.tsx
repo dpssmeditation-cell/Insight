@@ -140,7 +140,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
         }, 500); // Keep highlight visible for 500ms
 
         // Apply bold highlighting to current word in the DOM
-        if (word.length > 2) { // Only highlight words with 3+ characters
+        if (word.length > 0) { // Highlight all words
           const articleContent = document.querySelector('.prose');
           if (articleContent) {
             console.log('Found article content, searching for word:', word); // Debug log
