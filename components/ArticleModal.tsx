@@ -123,22 +123,28 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
 
     newUtterance.lang = targetLang;
 
-    // Try to select a "local" voice, which is more robust for events on Android
+    // Simplified voice selection for better compatibility
     const voices = window.speechSynthesis.getVoices();
     if (voices.length > 0) {
-      // First try to find a local voice for the language
-      const localVoice = voices.find(v => v.lang === targetLang && v.localService);
+      // 1. Prefer local voice for target language (better performance/privacy)
+      let selectedVoice = voices.find(v => v.lang === targetLang && v.localService);
 
-      if (localVoice) {
-        console.log('Selected local voice:', localVoice.name);
-        newUtterance.voice = localVoice;
+      // 2. Fallback to any voice for the target language
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang === targetLang);
+      }
+
+      // 3. Last resort: match just the language code (e.g. 'en')
+      if (!selectedVoice) {
+        const langCode = targetLang.split('-')[0];
+        selectedVoice = voices.find(v => v.lang.startsWith(langCode));
+      }
+
+      if (selectedVoice) {
+        console.log('TTS using voice:', selectedVoice.name, 'Local:', selectedVoice.localService);
+        newUtterance.voice = selectedVoice;
       } else {
-        // Fallback to exactly matching language, let browser decide if it's not local
-        const distinctVoice = voices.find(v => v.lang === targetLang);
-        if (distinctVoice) {
-          console.log('Selected fallback voice:', distinctVoice.name);
-          newUtterance.voice = distinctVoice;
-        }
+        console.log('No specific voice found for language:', targetLang, 'Using default');
       }
     }
 
