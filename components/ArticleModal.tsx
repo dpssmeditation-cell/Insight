@@ -21,6 +21,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
   const [isReading, setIsReading] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [highlightedText, setHighlightedText] = useState<string>('');
 
   // Load existing note on mount
   useEffect(() => {
@@ -109,19 +111,34 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
     newUtterance.rate = 0.9;
     newUtterance.pitch = 1;
 
+    // Track word boundaries for highlighting
+    newUtterance.onboundary = (event) => {
+      if (event.name === 'word') {
+        const charIndex = event.charIndex;
+        const word = textToRead.substring(charIndex, textToRead.indexOf(' ', charIndex));
+        setHighlightedText(word.trim());
+        setCurrentWordIndex(charIndex);
+      }
+    };
+
     newUtterance.onstart = () => {
       setIsReading(true);
       setIsPaused(false);
+      setCurrentWordIndex(0);
     };
 
     newUtterance.onend = () => {
       setIsReading(false);
       setIsPaused(false);
+      setHighlightedText('');
+      setCurrentWordIndex(0);
     };
 
     newUtterance.onerror = () => {
       setIsReading(false);
       setIsPaused(false);
+      setHighlightedText('');
+      setCurrentWordIndex(0);
     };
 
     setUtterance(newUtterance);
@@ -141,6 +158,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       window.speechSynthesis.cancel();
       setIsReading(false);
       setIsPaused(false);
+      setHighlightedText('');
+      setCurrentWordIndex(0);
     }
   };
 
@@ -409,8 +428,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
                 onClick={handlePlay}
                 disabled={isReading}
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${isReading
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-amber-700 hover:bg-amber-800 text-white shadow-sm hover:shadow-md'
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-amber-700 hover:bg-amber-800 text-white shadow-sm hover:shadow-md'
                   } ${language === 'zh' ? 'chinese-text' : ''}`}
                 title={t.play}
               >
@@ -424,8 +443,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
                 onClick={handlePause}
                 disabled={!isReading}
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-slate-600 hover:bg-slate-700 text-white shadow-sm hover:shadow-md'
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-slate-600 hover:bg-slate-700 text-white shadow-sm hover:shadow-md'
                   } ${language === 'zh' ? 'chinese-text' : ''}`}
                 title={t.pause}
               >
@@ -439,8 +458,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
                 onClick={handleStop}
                 disabled={!isReading && !isPaused}
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading && !isPaused
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    : 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md'
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md'
                   } ${language === 'zh' ? 'chinese-text' : ''}`}
                 title={t.stop}
               >
@@ -453,13 +472,13 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
           </div>
 
           {/* Article Text */}
-          <div className={`prose prose-slate prose-lg max-w-none text-slate-700 leading-relaxed font-serif ${language === 'zh' ? 'chinese-text' : ''}`}>
-            <p className="text-xl font-medium text-slate-900 mb-10 italic border-l-4 border-amber-800 pl-6 bg-amber-50/30 py-6 rounded-r-xl">
+          <div className={`prose prose-slate prose-lg max-w-none text-slate-700 leading-relaxed font-serif ${language === 'zh' ? 'chinese-text' : ''} ${isReading ? 'tts-reading-active' : ''}`}>
+            <p className={`text-xl font-medium text-slate-900 mb-10 italic border-l-4 border-amber-800 pl-6 bg-amber-50/30 py-6 rounded-r-xl ${isReading ? 'tts-highlight' : ''}`}>
               {getLocalizedExcerpt()}
             </p>
 
             {content ? (
-              <div dangerouslySetInnerHTML={{ __html: content }} />
+              <div dangerouslySetInnerHTML={{ __html: content }} className={isReading ? 'tts-highlight' : ''} />
             ) : (
               <div className="space-y-6 opacity-60 italic">
                 <p>{language === 'zh' ? '暂无正文内容。' : 'No article body content available.'}</p>

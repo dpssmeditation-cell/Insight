@@ -104,3 +104,29 @@ h6,
 .animate-scale-in {
     animation: scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* TTS Text Highlighting */
+.tts-highlight {
+    background-color: #fef3c7;
+    color: #92400e;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 0 2px #fbbf24;
+}
+
+@keyframes highlight-pulse {
+
+    0%,
+    100% {
+        background-color: #fef3c7;
+    }
+
+    50% {
+        background-color: #fde68a;
+    }
+}
+
+.tts-reading-active .tts-highlight {
+    animation: highlight-pulse 1s ease-in-out infinite;
+}
