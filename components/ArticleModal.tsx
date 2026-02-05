@@ -174,6 +174,17 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
 
                 const span = document.createElement('span');
                 span.className = 'tts-word-highlight';
+                // Add inline styles to ensure visibility
+                span.style.fontWeight = '900';
+                span.style.fontSize = '1.2em';
+                span.style.backgroundColor = '#fbbf24';
+                span.style.color = '#78350f';
+                span.style.padding = '4px 8px';
+                span.style.borderRadius = '6px';
+                span.style.boxShadow = '0 4px 8px rgba(251, 191, 36, 0.6)';
+                span.style.transform = 'scale(1.15)';
+                span.style.display = 'inline-block';
+                span.style.transition = 'all 0.2s ease';
                 span.textContent = matchedWord;
 
                 const fragment = document.createDocumentFragment();
