@@ -116,14 +116,33 @@ h6,
 }
 
 .tts-word-highlight {
-    font-weight: 700 !important;
+    font-weight: 900 !important;
+    font-size: 1.15em !important;
     background-color: #fbbf24 !important;
     color: #78350f !important;
-    padding: 3px 6px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(251, 191, 36, 0.4);
-    transition: all 0.15s ease;
-    display: inline-block;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 8px rgba(251, 191, 36, 0.6) !important;
+    transform: scale(1.1);
+    transition: all 0.2s ease !important;
+    display: inline-block !important;
+    animation: word-zoom 0.3s ease-out;
+}
+
+@keyframes word-zoom {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
 }
 
 @keyframes highlight-pulse {
