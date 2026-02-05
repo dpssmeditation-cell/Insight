@@ -113,6 +113,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
 
     // Track word boundaries for highlighting
     newUtterance.onboundary = (event) => {
+      console.log('onboundary event fired:', event.name, 'at index:', event.charIndex); // Debug log
       if (event.name === 'word') {
         const charIndex = event.charIndex;
         // Find word end (next space or end of string)
