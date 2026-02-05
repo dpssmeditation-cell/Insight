@@ -24,6 +24,17 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [highlightedText, setHighlightedText] = useState<string>('');
 
+  // Preload voices
+  useEffect(() => {
+    const loadVoices = () => {
+      window.speechSynthesis.getVoices();
+    };
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }, []);
+
   // Load existing note on mount
   useEffect(() => {
     const notesJson = localStorage.getItem(NOTES_STORAGE_KEY);
@@ -85,12 +96,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       return;
     }
 
-    if (isPaused) {
-      window.speechSynthesis.resume();
-      setIsPaused(false);
-      setIsReading(true);
-      return;
-    }
+    // Cancel any current speaking
+    window.speechSynthesis.cancel();
 
     const title = getLocalizedTitle();
     const excerpt = getLocalizedExcerpt();
@@ -99,13 +106,40 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
 
     const newUtterance = new SpeechSynthesisUtterance(textToRead);
 
-    // Set language based on current language
+    // Set language and voice based on current language
+    let targetLang = 'en-US';
     if (language === 'zh') {
-      newUtterance.lang = 'zh-CN';
+      targetLang = 'zh-CN';
     } else if (language === 'kh') {
-      newUtterance.lang = 'km-KH';
-    } else {
-      newUtterance.lang = 'en-US';
+      targetLang = 'km-KH';
+    }
+
+    newUtterance.lang = targetLang;
+
+    // Try to select a "local" voice, which is more robust for events on Android
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      // First try to find a local voice for the language
+      let bestVoice = voices.find(v => v.lang === targetLang && v.localService);
+
+      // If no local voice, try any voice for the exact language
+      if (!bestVoice) {
+        bestVoice = voices.find(v => v.lang === targetLang);
+      }
+
+      // If still no voice, try any voice that starts with the language code (e.g. 'en')
+      if (!bestVoice) {
+        const shortLang = targetLang.split('-')[0];
+        bestVoice = voices.find(v => v.lang.startsWith(shortLang) && v.localService);
+        if (!bestVoice) {
+          bestVoice = voices.find(v => v.lang.startsWith(shortLang));
+        }
+      }
+
+      if (bestVoice) {
+        console.log('Selected voice:', bestVoice.name, 'Local:', bestVoice.localService);
+        newUtterance.voice = bestVoice;
+      }
     }
 
     newUtterance.rate = 0.9;
