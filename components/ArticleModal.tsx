@@ -116,52 +116,77 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       if (event.name === 'word') {
         const charIndex = event.charIndex;
         // Find word end (next space or end of string)
-        let wordEnd = textToRead.indexOf(' ', charIndex);
-        if (wordEnd === -1) wordEnd = textToRead.length;
+        let wordEnd = charIndex;
+        while (wordEnd < textToRead.length && textToRead[wordEnd] !== ' ' && textToRead[wordEnd] !== '.' && textToRead[wordEnd] !== ',') {
+          wordEnd++;
+        }
 
         const word = textToRead.substring(charIndex, wordEnd).trim();
+        console.log('TTS Reading word:', word); // Debug log
         setHighlightedText(word);
         setCurrentWordIndex(charIndex);
 
         // Remove previous bold highlighting
-        document.querySelectorAll('.tts-word-highlight').forEach(el => {
-          el.classList.remove('tts-word-highlight');
+        const previousHighlights = document.querySelectorAll('.tts-word-highlight');
+        previousHighlights.forEach(el => {
+          const text = el.textContent || '';
+          const textNode = document.createTextNode(text);
+          if (el.parentNode) {
+            el.parentNode.replaceChild(textNode, el);
+          }
         });
 
         // Apply bold highlighting to current word in the DOM
-        const articleContent = document.querySelector('.prose');
-        if (articleContent && word.length > 0) {
-          const walker = document.createTreeWalker(
-            articleContent,
-            NodeFilter.SHOW_TEXT,
-            null
-          );
+        if (word.length > 2) { // Only highlight words with 3+ characters
+          const articleContent = document.querySelector('.prose');
+          if (articleContent) {
+            console.log('Found article content, searching for word:', word); // Debug log
 
-          let node;
-          while (node = walker.nextNode()) {
-            const text = node.textContent || '';
-            const wordIndex = text.indexOf(word);
-            if (wordIndex !== -1 && text.trim().length > 0) {
-              const parent = node.parentElement;
-              if (parent && !parent.classList.contains('tts-word-highlight')) {
-                // Wrap the word in a span with bold class
-                const before = text.substring(0, wordIndex);
-                const after = text.substring(wordIndex + word.length);
+            // Use a simpler approach: find all text nodes and wrap the word
+            const textNodes: Text[] = [];
+            const walker = document.createTreeWalker(
+              articleContent,
+              NodeFilter.SHOW_TEXT,
+              null
+            );
+
+            let node;
+            while (node = walker.nextNode()) {
+              if (node.textContent && node.textContent.trim().length > 0) {
+                textNodes.push(node as Text);
+              }
+            }
+
+            // Search for the word in text nodes
+            for (const textNode of textNodes) {
+              const text = textNode.textContent || '';
+              const regex = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+              const match = text.match(regex);
+
+              if (match && match.index !== undefined) {
+                console.log('Found word in text:', text.substring(0, 50)); // Debug log
+                const matchIndex = match.index;
+                const matchedWord = match[0];
+
+                const before = text.substring(0, matchIndex);
+                const after = text.substring(matchIndex + matchedWord.length);
 
                 const span = document.createElement('span');
                 span.className = 'tts-word-highlight';
-                span.textContent = word;
+                span.textContent = matchedWord;
 
-                const beforeNode = document.createTextNode(before);
-                const afterNode = document.createTextNode(after);
+                const fragment = document.createDocumentFragment();
+                if (before) fragment.appendChild(document.createTextNode(before));
+                fragment.appendChild(span);
+                if (after) fragment.appendChild(document.createTextNode(after));
 
-                parent.insertBefore(beforeNode, node);
-                parent.insertBefore(span, node);
-                parent.insertBefore(afterNode, node);
-                parent.removeChild(node);
+                textNode.parentNode?.replaceChild(fragment, textNode);
+                console.log('Applied highlight to word:', matchedWord); // Debug log
                 break;
               }
             }
+          } else {
+            console.log('Article content not found'); // Debug log
           }
         }
       }
