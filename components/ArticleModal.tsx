@@ -115,9 +115,55 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
     newUtterance.onboundary = (event) => {
       if (event.name === 'word') {
         const charIndex = event.charIndex;
-        const word = textToRead.substring(charIndex, textToRead.indexOf(' ', charIndex));
-        setHighlightedText(word.trim());
+        // Find word end (next space or end of string)
+        let wordEnd = textToRead.indexOf(' ', charIndex);
+        if (wordEnd === -1) wordEnd = textToRead.length;
+
+        const word = textToRead.substring(charIndex, wordEnd).trim();
+        setHighlightedText(word);
         setCurrentWordIndex(charIndex);
+
+        // Remove previous bold highlighting
+        document.querySelectorAll('.tts-word-highlight').forEach(el => {
+          el.classList.remove('tts-word-highlight');
+        });
+
+        // Apply bold highlighting to current word in the DOM
+        const articleContent = document.querySelector('.prose');
+        if (articleContent && word.length > 0) {
+          const walker = document.createTreeWalker(
+            articleContent,
+            NodeFilter.SHOW_TEXT,
+            null
+          );
+
+          let node;
+          while (node = walker.nextNode()) {
+            const text = node.textContent || '';
+            const wordIndex = text.indexOf(word);
+            if (wordIndex !== -1 && text.trim().length > 0) {
+              const parent = node.parentElement;
+              if (parent && !parent.classList.contains('tts-word-highlight')) {
+                // Wrap the word in a span with bold class
+                const before = text.substring(0, wordIndex);
+                const after = text.substring(wordIndex + word.length);
+
+                const span = document.createElement('span');
+                span.className = 'tts-word-highlight';
+                span.textContent = word;
+
+                const beforeNode = document.createTextNode(before);
+                const afterNode = document.createTextNode(after);
+
+                parent.insertBefore(beforeNode, node);
+                parent.insertBefore(span, node);
+                parent.insertBefore(afterNode, node);
+                parent.removeChild(node);
+                break;
+              }
+            }
+          }
+        }
       }
     };
 
@@ -132,6 +178,12 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       setIsPaused(false);
       setHighlightedText('');
       setCurrentWordIndex(0);
+      // Clean up bold highlighting
+      document.querySelectorAll('.tts-word-highlight').forEach(el => {
+        const text = el.textContent || '';
+        const textNode = document.createTextNode(text);
+        el.parentNode?.replaceChild(textNode, el);
+      });
     };
 
     newUtterance.onerror = () => {
@@ -139,6 +191,12 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       setIsPaused(false);
       setHighlightedText('');
       setCurrentWordIndex(0);
+      // Clean up bold highlighting
+      document.querySelectorAll('.tts-word-highlight').forEach(el => {
+        const text = el.textContent || '';
+        const textNode = document.createTextNode(text);
+        el.parentNode?.replaceChild(textNode, el);
+      });
     };
 
     setUtterance(newUtterance);
@@ -160,6 +218,12 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       setIsPaused(false);
       setHighlightedText('');
       setCurrentWordIndex(0);
+      // Clean up bold highlighting
+      document.querySelectorAll('.tts-word-highlight').forEach(el => {
+        const text = el.textContent || '';
+        const textNode = document.createTextNode(text);
+        el.parentNode?.replaceChild(textNode, el);
+      });
     }
   };
 
