@@ -12,7 +12,7 @@ import { MultimediaPage } from './components/MultimediaPage';
 import { ArticlesPage } from './components/ArticlesPage';
 import { AboutPage } from './components/AboutPage';
 import { AudioPage } from './components/AudioPage';
-import { DonationPage } from './components/DonationPage';
+
 import { AdminPage } from './components/AdminPage';
 import { ProfilePage } from './components/ProfilePage';
 import { MyLibraryPage } from './components/MyLibraryPage';
@@ -171,7 +171,7 @@ const App: React.FC = () => {
     const view = params.get('v') as ViewState;
     const id = params.get('id');
 
-    if (view && ['books', 'articles', 'multimedia', 'about', 'audio', 'donate', 'admin', 'profile', 'my-library'].includes(view)) {
+    if (view && ['books', 'articles', 'multimedia', 'about', 'audio', 'admin', 'profile', 'my-library'].includes(view)) {
       setCurrentView(view);
 
       // Special handling for books on home page
@@ -260,8 +260,6 @@ const App: React.FC = () => {
         return <AboutPage language={language} onRead={handleReadBook} books={books} audios={audios} videos={videos} articles={articles} />;
       case 'audio':
         return <AudioPage language={language} audios={audios} initialId={new URLSearchParams(window.location.search).get('id')} />;
-      case 'donate':
-        return <DonationPage language={language} />;
       case 'books':
       default:
         return (

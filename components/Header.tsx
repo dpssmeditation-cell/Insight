@@ -69,14 +69,14 @@ export const Header: React.FC<HeaderProps> = ({
                 key={`${item.label}-${idx}`}
                 onClick={() => onNavigate(item.view)}
                 className={`text-[14px] font-medium transition-all duration-200 border-b-2 border-transparent py-1 ${(currentView === item.view && (
-                    (item.view === 'audio' && currentView === 'audio') ||
-                    (item.view === 'articles' && currentView === 'articles') ||
-                    (item.view === 'books' && currentView === 'books' && (item.label === t.home || item.label === t.books)) ||
-                    (item.view === 'multimedia' && currentView === 'multimedia') ||
-                    (item.view === 'about' && currentView === 'about')
-                  ))
-                    ? 'text-amber-900 dark:text-amber-500 border-amber-900 dark:border-amber-500'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-amber-900 dark:hover:text-amber-500 hover:border-amber-200 dark:hover:border-amber-800'
+                  (item.view === 'audio' && currentView === 'audio') ||
+                  (item.view === 'articles' && currentView === 'articles') ||
+                  (item.view === 'books' && currentView === 'books' && (item.label === t.home || item.label === t.books)) ||
+                  (item.view === 'multimedia' && currentView === 'multimedia') ||
+                  (item.view === 'about' && currentView === 'about')
+                ))
+                  ? 'text-amber-900 dark:text-amber-500 border-amber-900 dark:border-amber-500'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-amber-900 dark:hover:text-amber-500 hover:border-amber-200 dark:hover:border-amber-800'
                   } ${language === 'kh' ? 'khmer-text' : (language === 'zh' ? 'chinese-text' : '')}`}
               >
                 {item.label}
@@ -176,12 +176,6 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            <button
-              onClick={() => onNavigate('donate')}
-              className={`bg-amber-900 hover:bg-amber-800 dark:bg-amber-700 dark:hover:bg-amber-600 text-white px-6 py-2 rounded-full text-sm font-semibold transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5 ${language === 'kh' ? 'khmer-text' : ''}`}
-            >
-              {t.donate}
-            </button>
           </div>
 
           <button
@@ -210,8 +204,8 @@ export const Header: React.FC<HeaderProps> = ({
                   setIsMenuOpen(false);
                 }}
                 className={`text-lg font-serif font-medium text-left border-l-4 pl-3 transition-all ${(currentView === item.view)
-                    ? 'text-amber-900 dark:text-amber-500 border-amber-900 dark:border-amber-500'
-                    : 'text-slate-800 dark:text-slate-200 hover:text-amber-900 dark:hover:text-amber-500 border-transparent hover:border-amber-900 dark:hover:border-amber-500'
+                  ? 'text-amber-900 dark:text-amber-500 border-amber-900 dark:border-amber-500'
+                  : 'text-slate-800 dark:text-slate-200 hover:text-amber-900 dark:hover:text-amber-500 border-transparent hover:border-amber-900 dark:hover:border-amber-500'
                   } ${language === 'kh' ? 'khmer-text' : ''}`}
               >
                 {item.label}
@@ -258,15 +252,6 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               )}
 
-              <button
-                onClick={() => {
-                  onNavigate('donate');
-                  setIsMenuOpen(false);
-                }}
-                className={`bg-amber-900 dark:bg-amber-700 text-white w-full py-3 rounded-md text-base font-medium shadow-sm ${language === 'kh' ? 'khmer-text' : ''}`}
-              >
-                {t.donate}
-              </button>
             </div>
           </nav>
         </div>

@@ -135,4 +135,4 @@ export interface User {
 }
 
 export type Language = 'en' | 'zh' | 'kh';
-export type ViewState = 'books' | 'articles' | 'multimedia' | 'about' | 'audio' | 'donate' | 'admin' | 'profile' | 'my-library';
+export type ViewState = 'books' | 'articles' | 'multimedia' | 'about' | 'audio' | 'admin' | 'profile' | 'my-library';

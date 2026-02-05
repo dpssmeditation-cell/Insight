@@ -263,7 +263,7 @@ export const UI_STRINGS = {
     about: 'About',
     authors: 'Authors',
     login: 'Member',
-    donate: 'Donate',
+
     library: 'Library',
     audioLibrary: 'Audio Library',
     heroSub: 'Discovering the essence of 5000 years of civilization, history, and wisdom through Insight Sharing.',
@@ -286,8 +286,7 @@ export const UI_STRINGS = {
     biography: 'Biography',
     buddhism: 'Buddhism',
     dhammaTalks: 'Dhamma Talks',
-    donateHeader: 'Support Insight Sharing',
-    donateDesc: 'Your contribution helps us preserve five millennia of wisdom and bring it to a global audience.',
+
     oneTime: 'One-time',
     monthly: 'Monthly',
     customAmount: 'Custom Amount',
@@ -341,7 +340,7 @@ export const UI_STRINGS = {
     about: '关于',
     authors: '作者',
     login: '会员',
-    donate: '捐助',
+
     library: '图书馆',
     audioLibrary: '音频库',
     heroSub: '通过 Insight Sharing 精选馆藏，探索五千年文明的精髓。',
@@ -364,8 +363,7 @@ export const UI_STRINGS = {
     biography: '传记',
     buddhism: '佛家',
     dhammaTalks: '法谈',
-    donateHeader: '支持 Insight Sharing',
-    donateDesc: '您的捐助将帮助我们保护五千年的智慧，并将其推向全球观众。',
+
     oneTime: '一次性',
     monthly: '每月',
     customAmount: '自定义金额',
@@ -419,7 +417,7 @@ export const UI_STRINGS = {
     about: 'អំពីយើង',
     authors: 'អ្នកនិពន្ធ',
     login: 'សមាជិក',
-    donate: 'ឧបត្ថម្ភ',
+
     library: 'បណ្ណាល័យ',
     audioLibrary: 'បណ្ណាល័យសំឡេង',
     heroSub: 'ស្វែងយល់ពីខ្លឹមសារនៃវប្បធម៌ប្រពៃណី ៥០០០ ឆ្នាំ តាមរយៈ Insight Sharing។',
@@ -442,8 +440,7 @@ export const UI_STRINGS = {
     biography: 'ជីវប្រវត្តិ',
     buddhism: 'ព្រះពុទ្ធសាសនា',
     dhammaTalks: 'ធម្មទេសនា',
-    donateHeader: 'គាំទ្រ Insight Sharing',
-    donateDesc: 'ការចូលរួមរបស់អ្នកជួយថែរក្សាប្រាជ្ញារាប់ពាន់ឆ្នាំ និងនាំយកវាទៅកាន់ពិភពលោក។',
+
     oneTime: 'ម្ដង',
     monthly: 'រាល់ខែ',
     customAmount: 'ចំនួនផ្សេងៗ',
