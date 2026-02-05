@@ -332,6 +332,11 @@ export const UI_STRINGS = {
     backToSignIn: 'Back to Sign In',
     resetSuccess: 'We have sent a password reset link to your email.',
     exportPdf: 'Export PDF',
+    myNotes: 'My Notes',
+    saveNote: 'Save Note',
+    notePlaceholder: 'Add your personal notes about this article...',
+    notesSaved: 'Notes saved!',
+    lastUpdated: 'Last updated',
   },
   zh: {
     home: '首页',
@@ -410,6 +415,11 @@ export const UI_STRINGS = {
     backToSignIn: '返回登录',
     resetSuccess: '我们已向您的电子邮件发送了重置密码的链接。',
     exportPdf: '导出 PDF',
+    myNotes: '我的笔记',
+    saveNote: '保存笔记',
+    notePlaceholder: '在此添加您对本文的个人笔记...',
+    notesSaved: '笔记已保存！',
+    lastUpdated: '最后更新',
   },
   kh: {
     home: 'ទំព័រដើម',
@@ -488,5 +498,10 @@ export const UI_STRINGS = {
     backToSignIn: 'ត្រឡប់ទៅចូលប្រើ',
     resetSuccess: 'យើងបានផ្ញើតំណកំណត់ពាក្យសម្ងាត់ទៅអ៊ីមែលរបស់អ្នក។',
     exportPdf: 'នាំចេញជា PDF',
+    myNotes: 'កំណត់ចំណាំរបស់ខ្ញុំ',
+    saveNote: 'រក្សាទុកកំណត់ចំណាំ',
+    notePlaceholder: 'បន្ថែមកំណត់ចំណាំផ្ទាល់ខ្លួនរបស់អ្នកអំពីអត្ថបទនេះ...',
+    notesSaved: 'កំណត់ចំណាំត្រូវបានរក្សាទុក!',
+    lastUpdated: 'ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ',
   }
 };

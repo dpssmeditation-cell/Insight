@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Article, Language } from '../types';
 import { UI_STRINGS } from '../constants';
 
@@ -9,8 +9,52 @@ interface ArticleModalProps {
   language: Language;
 }
 
+const NOTES_STORAGE_KEY = 'article_notes';
+
 export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, language }) => {
   const t = UI_STRINGS[language];
+  const [noteContent, setNoteContent] = useState('');
+  const [noteTimestamp, setNoteTimestamp] = useState<string | null>(null);
+  const [showSavedMessage, setShowSavedMessage] = useState(false);
+
+  // Load existing note on mount
+  useEffect(() => {
+    const notesJson = localStorage.getItem(NOTES_STORAGE_KEY);
+    if (notesJson) {
+      try {
+        const notes = JSON.parse(notesJson);
+        if (notes[article.id]) {
+          setNoteContent(notes[article.id].content || '');
+          setNoteTimestamp(notes[article.id].timestamp || null);
+        }
+      } catch (error) {
+        console.error('Error loading notes:', error);
+      }
+    }
+  }, [article.id]);
+
+  const handleSaveNote = () => {
+    try {
+      const notesJson = localStorage.getItem(NOTES_STORAGE_KEY);
+      const notes = notesJson ? JSON.parse(notesJson) : {};
+
+      const timestamp = new Date().toISOString();
+      notes[article.id] = {
+        content: noteContent,
+        timestamp: timestamp
+      };
+
+      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notes));
+      setNoteTimestamp(timestamp);
+
+      // Show saved message
+      setShowSavedMessage(true);
+      setTimeout(() => setShowSavedMessage(false), 2000);
+    } catch (error) {
+      console.error('Error saving note:', error);
+      alert('Failed to save note. Please try again.');
+    }
+  };
 
   const getLocalizedTitle = () => {
     if (language === 'zh') return article.titleZh;
@@ -274,6 +318,47 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
                 <div className="h-4 bg-slate-100 rounded w-4/6"></div>
               </div>
             )}
+          </div>
+
+          {/* Personal Notes Section */}
+          <div className="mt-12 pt-8 border-t border-slate-200">
+            <div className="flex items-center gap-3 mb-4">
+              <svg className="w-6 h-6 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+              <h3 className={`text-2xl font-bold text-slate-900 ${language === 'zh' ? 'chinese-text' : ''}`}>{t.myNotes}</h3>
+            </div>
+
+            <textarea
+              value={noteContent}
+              onChange={(e) => setNoteContent(e.target.value)}
+              placeholder={t.notePlaceholder}
+              className={`w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none text-slate-700 font-serif focus:border-amber-700 transition-colors resize-none ${language === 'zh' ? 'chinese-text' : ''}`}
+              rows={6}
+            ></textarea>
+
+            <div className="flex items-center justify-between mt-4">
+              <div className="text-sm text-slate-500">
+                {noteTimestamp && (
+                  <span>
+                    {t.lastUpdated}: {new Date(noteTimestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                {showSavedMessage && (
+                  <span className="text-green-600 font-medium text-sm animate-fade-in flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    {t.notesSaved}
+                  </span>
+                )}
+                <button
+                  onClick={handleSaveNote}
+                  className={`px-6 py-2.5 bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-lg transition-all shadow-md hover:shadow-lg active:scale-95 ${language === 'zh' ? 'chinese-text' : ''}`}
+                >
+                  {t.saveNote}
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="mt-16 pt-10 border-t border-slate-100 flex justify-center">
