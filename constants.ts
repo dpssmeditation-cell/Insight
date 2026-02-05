@@ -331,6 +331,7 @@ export const UI_STRINGS = {
     sendResetLink: 'Send Reset Link',
     backToSignIn: 'Back to Sign In',
     resetSuccess: 'We have sent a password reset link to your email.',
+    exportPdf: 'Export PDF',
   },
   zh: {
     home: '首页',
@@ -408,6 +409,7 @@ export const UI_STRINGS = {
     sendResetLink: '发送重置链接',
     backToSignIn: '返回登录',
     resetSuccess: '我们已向您的电子邮件发送了重置密码的链接。',
+    exportPdf: '导出 PDF',
   },
   kh: {
     home: 'ទំព័រដើម',
@@ -485,5 +487,6 @@ export const UI_STRINGS = {
     sendResetLink: 'ផ្ញើតំណ',
     backToSignIn: 'ត្រឡប់ទៅចូលប្រើ',
     resetSuccess: 'យើងបានផ្ញើតំណកំណត់ពាក្យសម្ងាត់ទៅអ៊ីមែលរបស់អ្នក។',
+    exportPdf: 'នាំចេញជា PDF',
   }
 };
