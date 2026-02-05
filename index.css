@@ -123,10 +123,27 @@ h6,
     padding: 4px 8px !important;
     border-radius: 6px !important;
     box-shadow: 0 4px 8px rgba(251, 191, 36, 0.6) !important;
-    transform: scale(1.1);
+    transform: scale(1.1) !important;
     transition: all 0.2s ease !important;
     display: inline-block !important;
-    animation: word-zoom 0.3s ease-out;
+    animation: word-zoom 0.3s ease-out !important;
+    line-height: 1.8 !important;
+    vertical-align: baseline !important;
+}
+
+/* More specific selectors to override prose styles */
+.prose .tts-word-highlight,
+.prose p .tts-word-highlight,
+.prose div .tts-word-highlight {
+    font-weight: 900 !important;
+    font-size: 1.15em !important;
+    background-color: #fbbf24 !important;
+    color: #78350f !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 8px rgba(251, 191, 36, 0.6) !important;
+    transform: scale(1.1) !important;
+    display: inline-block !important;
 }
 
 @keyframes word-zoom {
