@@ -96,6 +96,13 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
       return;
     }
 
+    if (isPaused) {
+      window.speechSynthesis.resume();
+      setIsPaused(false);
+      setIsReading(true);
+      return;
+    }
+
     // Cancel any current speaking
     window.speechSynthesis.cancel();
 
@@ -120,25 +127,18 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
     const voices = window.speechSynthesis.getVoices();
     if (voices.length > 0) {
       // First try to find a local voice for the language
-      let bestVoice = voices.find(v => v.lang === targetLang && v.localService);
+      const localVoice = voices.find(v => v.lang === targetLang && v.localService);
 
-      // If no local voice, try any voice for the exact language
-      if (!bestVoice) {
-        bestVoice = voices.find(v => v.lang === targetLang);
-      }
-
-      // If still no voice, try any voice that starts with the language code (e.g. 'en')
-      if (!bestVoice) {
-        const shortLang = targetLang.split('-')[0];
-        bestVoice = voices.find(v => v.lang.startsWith(shortLang) && v.localService);
-        if (!bestVoice) {
-          bestVoice = voices.find(v => v.lang.startsWith(shortLang));
+      if (localVoice) {
+        console.log('Selected local voice:', localVoice.name);
+        newUtterance.voice = localVoice;
+      } else {
+        // Fallback to exactly matching language, let browser decide if it's not local
+        const distinctVoice = voices.find(v => v.lang === targetLang);
+        if (distinctVoice) {
+          console.log('Selected fallback voice:', distinctVoice.name);
+          newUtterance.voice = distinctVoice;
         }
-      }
-
-      if (bestVoice) {
-        console.log('Selected voice:', bestVoice.name, 'Local:', bestVoice.localService);
-        newUtterance.voice = bestVoice;
       }
     }
 
