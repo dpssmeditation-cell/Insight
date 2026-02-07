@@ -10,6 +10,21 @@ interface ArticleCardProps {
 
 export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onClick, language }) => {
   const t = UI_STRINGS[language];
+  const [progress, setProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem('article_progress');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data[article.id]?.progress) {
+          setProgress(data[article.id].progress);
+        }
+      }
+    } catch (e) {
+      console.error('Error loading progress', e);
+    }
+  }, [article.id]);
 
   const getLocalizedTitle = () => {
     if (language === 'zh') return article.titleZh;
@@ -78,7 +93,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onClick, lang
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" /></svg>
           </button>
           <button onClick={(e) => handleShare('twitter', e)} className="w-8 h-8 bg-white/90 hover:bg-white text-slate-900 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H3.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.5689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z" /></svg>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H3.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.6689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z" /></svg>
           </button>
           <button onClick={(e) => handleShare('telegram', e)} className="w-8 h-8 bg-white/90 hover:bg-white text-slate-900 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110">
             <svg className="w-4 h-4 ml-[-1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.8-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" /></svg>
@@ -90,6 +105,16 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onClick, lang
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
           <span>{(article.views || 0).toLocaleString()}</span>
         </div>
+
+        {/* Progress Bar */}
+        {progress > 0 && (
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-900/20 backdrop-blur-sm z-10">
+            <div
+              className="h-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
       </div>
 
       <div className="p-5 flex flex-col flex-grow">

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Article, Language } from '../types';
 import { UI_STRINGS } from '../constants';
 
@@ -10,6 +10,8 @@ interface ArticleModalProps {
 }
 
 const NOTES_STORAGE_KEY = 'article_notes';
+const PROGRESS_STORAGE_KEY = 'article_progress';
+const WORDS_PER_MINUTE = 200;
 
 export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, language }) => {
   const t = UI_STRINGS[language];
@@ -17,12 +19,93 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
   const [noteTimestamp, setNoteTimestamp] = useState<string | null>(null);
   const [showSavedMessage, setShowSavedMessage] = useState(false);
 
+  // Reading Progress State
+  const [readProgress, setReadProgress] = useState(0);
+  const [estimatedReadTime, setEstimatedReadTime] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // TTS State
   const [isReading, setIsReading] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [highlightedText, setHighlightedText] = useState<string>('');
+
+  // Calculate reading time on mount
+  useEffect(() => {
+    const stripHtml = (html: string) => {
+      const tmp = document.createElement('DIV');
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || '';
+    };
+
+    const content = language === 'zh' && article.contentZh ? article.contentZh : (language === 'kh' && article.contentKh ? article.contentKh : article.content || '');
+    const excerpt = language === 'zh' && article.excerptZh ? article.excerptZh : (language === 'kh' && article.excerptKh ? article.excerptKh : article.excerpt || '');
+    const fullText = stripHtml(`${excerpt} ${content}`);
+    const wordCount = fullText.split(/\s+/).filter(word => word.length > 0).length;
+    setEstimatedReadTime(Math.ceil(wordCount / WORDS_PER_MINUTE));
+  }, [article, language]);
+
+  // Load saved progress and restore scroll position
+  useEffect(() => {
+    const progressJson = localStorage.getItem(PROGRESS_STORAGE_KEY);
+    if (progressJson) {
+      try {
+        const progressData = JSON.parse(progressJson);
+        if (progressData[article.id]) {
+          const savedProgress = progressData[article.id].progress || 0;
+          setReadProgress(savedProgress);
+
+          if (contentRef.current && savedProgress > 0) {
+            setTimeout(() => {
+              const elem = contentRef.current!;
+              const scrollPos = (savedProgress / 100) * (elem.scrollHeight - elem.clientHeight);
+              elem.scrollTop = scrollPos;
+            }, 300);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading progress:', error);
+      }
+    }
+  }, [article.id]);
+
+  // Track scroll progress
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!contentRef.current) return;
+      const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
+      const maxScroll = scrollHeight - clientHeight;
+      if (maxScroll <= 0) return;
+
+      const progress = Math.round((scrollTop / maxScroll) * 100);
+      setReadProgress(progress);
+
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (progress > 5) {
+          try {
+            const progressJson = localStorage.getItem(PROGRESS_STORAGE_KEY);
+            const progressData = progressJson ? JSON.parse(progressJson) : {};
+            progressData[article.id] = { progress, timestamp: new Date().toISOString() };
+            localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progressData));
+          } catch (error) {
+            console.error('Error saving progress:', error);
+          }
+        }
+      }, 250);
+    };
+
+    const elem = contentRef.current;
+    if (elem) {
+      elem.addEventListener('scroll', handleScroll);
+      return () => {
+        elem.removeEventListener('scroll', handleScroll);
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      };
+    }
+  }, [article.id]);
 
   // Preload voices
   useEffect(() => {
@@ -475,7 +558,17 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
         className="absolute inset-0 bg-slate-900/90 backdrop-blur-md animate-fade-in"
       />
 
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-y-auto animate-fade-in-up flex flex-col">
+      <div
+        ref={contentRef}
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-y-auto animate-fade-in-up flex flex-col"
+      >
+        {/* Reading Progress Bar */}
+        <div className="sticky top-0 z-[60] w-full h-1.5 bg-slate-100">
+          <div
+            className="h-full bg-amber-600 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(217,119,6,0.5)]"
+            style={{ width: `${readProgress}%` }}
+          />
+        </div>
 
         {/* Hero Image Section */}
         <div className="relative w-full aspect-[21/9] overflow-hidden bg-slate-200 shrink-0">
@@ -524,12 +617,18 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
             <div className="flex items-center gap-6 text-slate-500 text-sm font-medium">
               <div className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>{article.readTime}</span>
+                <span>{estimatedReadTime > 0 ? `${estimatedReadTime} min read` : article.readTime}</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                 <span>{(article.views || 0).toLocaleString()}</span>
               </div>
+              {readProgress > 5 && (
+                <div className="flex items-center gap-2 text-amber-700 font-medium animate-fade-in">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>{readProgress}% complete</span>
+                </div>
+              )}
             </div>
 
 
