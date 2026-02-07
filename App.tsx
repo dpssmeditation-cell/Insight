@@ -335,9 +335,20 @@ const App: React.FC = () => {
       else if (type === 'video') setVideos(newData as Video[]);
       else if (type === 'article') setArticles(newData as Article[]);
       else if (type === 'artist') setArtists(newData as Artist[]);
-    } catch (error) {
-      alert("Failed to save item to Firebase. Please check your internet connection.");
-      console.error(error);
+    } catch (error: any) {
+      console.error('Firebase save error:', error);
+
+      let errorMessage = "Failed to save item to Firebase.";
+
+      if (error.code === 'permission-denied') {
+        errorMessage = "Permission denied. Please check Firebase security rules.";
+      } else if (error.code === 'unavailable') {
+        errorMessage = "Firebase service unavailable. Please check your internet connection.";
+      } else if (error.message) {
+        errorMessage = `Failed to save: ${error.message}`;
+      }
+
+      alert(errorMessage);
     }
   };
 
