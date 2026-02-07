@@ -90,7 +90,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
     return tmp.textContent || tmp.innerText || '';
   };
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
     if (!window.speechSynthesis) {
       alert('Text-to-speech is not supported in your browser.');
       return;
@@ -111,170 +111,229 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
     const content = getLocalizedContent();
     const textToRead = `${title}. ${excerpt}. ${stripHtml(content)}`;
 
-    const newUtterance = new SpeechSynthesisUtterance(textToRead);
+    // Android-specific: Wait for voices to load
+    const loadVoices = (): Promise<SpeechSynthesisVoice[]> => {
+      return new Promise((resolve) => {
+        let voices = window.speechSynthesis.getVoices();
 
-    // Set language and voice based on current language
-    let targetLang = 'en-US';
-    if (language === 'zh') {
-      targetLang = 'zh-CN';
-    } else if (language === 'kh') {
-      targetLang = 'km-KH';
-    }
-
-    newUtterance.lang = targetLang;
-
-    // Simplified voice selection for better compatibility
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      // 1. Prefer local voice for target language (better performance/privacy)
-      let selectedVoice = voices.find(v => v.lang === targetLang && v.localService);
-
-      // 2. Fallback to any voice for the target language
-      if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang === targetLang);
-      }
-
-      // 3. Last resort: match just the language code (e.g. 'en')
-      if (!selectedVoice) {
-        const langCode = targetLang.split('-')[0];
-        selectedVoice = voices.find(v => v.lang.startsWith(langCode));
-      }
-
-      if (selectedVoice) {
-        console.log('TTS using voice:', selectedVoice.name, 'Local:', selectedVoice.localService);
-        newUtterance.voice = selectedVoice;
-      } else {
-        console.log('No specific voice found for language:', targetLang, 'Using default');
-      }
-    }
-
-    newUtterance.rate = 0.9;
-    newUtterance.pitch = 1;
-
-    // Track word boundaries for highlighting
-    newUtterance.onboundary = (event) => {
-      console.log('onboundary event fired:', event.name, 'at index:', event.charIndex); // Debug log
-      if (event.name === 'word') {
-        const charIndex = event.charIndex;
-        // Find word end (next space or end of string)
-        let wordEnd = charIndex;
-        while (wordEnd < textToRead.length && textToRead[wordEnd] !== ' ' && textToRead[wordEnd] !== '.' && textToRead[wordEnd] !== ',') {
-          wordEnd++;
+        if (voices.length > 0) {
+          resolve(voices);
+          return;
         }
 
-        const word = textToRead.substring(charIndex, wordEnd).trim();
-        console.log('TTS Reading word:', word); // Debug log
-        setHighlightedText(word);
-        setCurrentWordIndex(charIndex);
+        // Android Chrome needs time to load voices
+        const voicesChangedHandler = () => {
+          voices = window.speechSynthesis.getVoices();
+          if (voices.length > 0) {
+            window.speechSynthesis.removeEventListener('voiceschanged', voicesChangedHandler);
+            resolve(voices);
+          }
+        };
 
-        // Remove previous bold highlighting with a delay
+        window.speechSynthesis.addEventListener('voiceschanged', voicesChangedHandler);
+
+        // Fallback timeout for Android
         setTimeout(() => {
-          const previousHighlights = document.querySelectorAll('.tts-word-highlight');
-          previousHighlights.forEach(el => {
-            const text = el.textContent || '';
-            const textNode = document.createTextNode(text);
-            if (el.parentNode) {
-              el.parentNode.replaceChild(textNode, el);
-            }
-          });
-        }, 500); // Keep highlight visible for 500ms
+          voices = window.speechSynthesis.getVoices();
+          window.speechSynthesis.removeEventListener('voiceschanged', voicesChangedHandler);
+          resolve(voices);
+        }, 1000);
+      });
+    };
 
-        // Apply bold highlighting to current word in the DOM
-        if (word.length > 0) { // Highlight all words
-          const articleContent = document.querySelector('.prose');
-          if (articleContent) {
-            console.log('Found article content, searching for word:', word); // Debug log
+    try {
+      const voices = await loadVoices();
 
-            // Use a simpler approach: find all text nodes and wrap the word
-            const textNodes: Text[] = [];
-            const walker = document.createTreeWalker(
-              articleContent,
-              NodeFilter.SHOW_TEXT,
-              null
-            );
+      const newUtterance = new SpeechSynthesisUtterance(textToRead);
 
-            let node;
-            while (node = walker.nextNode()) {
-              if (node.textContent && node.textContent.trim().length > 0) {
-                textNodes.push(node as Text);
+      // Set language and voice based on current language
+      let targetLang = 'en-US';
+      if (language === 'zh') {
+        targetLang = 'zh-CN';
+      } else if (language === 'kh') {
+        targetLang = 'km-KH';
+      }
+
+      newUtterance.lang = targetLang;
+
+      // Voice selection with Android compatibility
+      if (voices.length > 0) {
+        // 1. Prefer local voice for target language (better performance/privacy)
+        let selectedVoice = voices.find(v => v.lang === targetLang && v.localService);
+
+        // 2. Fallback to any voice for the target language
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => v.lang === targetLang);
+        }
+
+        // 3. Last resort: match just the language code (e.g. 'en')
+        if (!selectedVoice) {
+          const langCode = targetLang.split('-')[0];
+          selectedVoice = voices.find(v => v.lang.startsWith(langCode));
+        }
+
+        if (selectedVoice) {
+          console.log('TTS using voice:', selectedVoice.name, 'Local:', selectedVoice.localService);
+          newUtterance.voice = selectedVoice;
+        } else {
+          console.log('No specific voice found for language:', targetLang, 'Using default');
+        }
+      }
+
+      newUtterance.rate = 0.9;
+      newUtterance.pitch = 1;
+
+      // Track word boundaries for highlighting
+      newUtterance.onboundary = (event) => {
+        console.log('onboundary event fired:', event.name, 'at index:', event.charIndex); // Debug log
+        if (event.name === 'word') {
+          const charIndex = event.charIndex;
+          // Find word end (next space or end of string)
+          let wordEnd = charIndex;
+          while (wordEnd < textToRead.length && textToRead[wordEnd] !== ' ' && textToRead[wordEnd] !== '.' && textToRead[wordEnd] !== ',') {
+            wordEnd++;
+          }
+
+          const word = textToRead.substring(charIndex, wordEnd).trim();
+          console.log('TTS Reading word:', word); // Debug log
+          setHighlightedText(word);
+          setCurrentWordIndex(charIndex);
+
+          // Remove previous bold highlighting with a delay
+          setTimeout(() => {
+            const previousHighlights = document.querySelectorAll('.tts-word-highlight');
+            previousHighlights.forEach(el => {
+              const text = el.textContent || '';
+              const textNode = document.createTextNode(text);
+              if (el.parentNode) {
+                el.parentNode.replaceChild(textNode, el);
               }
-            }
+            });
+          }, 500); // Keep highlight visible for 500ms
 
-            // Search for the word in text nodes
-            for (const textNode of textNodes) {
-              const text = textNode.textContent || '';
-              const regex = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-              const match = text.match(regex);
+          // Apply bold highlighting to current word in the DOM
+          if (word.length > 0) { // Highlight all words
+            const articleContent = document.querySelector('.prose');
+            if (articleContent) {
+              console.log('Found article content, searching for word:', word); // Debug log
 
-              if (match && match.index !== undefined) {
-                console.log('Found word in text:', text.substring(0, 50)); // Debug log
-                const matchIndex = match.index;
-                const matchedWord = match[0];
+              // Use a simpler approach: find all text nodes and wrap the word
+              const textNodes: Text[] = [];
+              const walker = document.createTreeWalker(
+                articleContent,
+                NodeFilter.SHOW_TEXT,
+                null
+              );
 
-                const before = text.substring(0, matchIndex);
-                const after = text.substring(matchIndex + matchedWord.length);
-
-                const span = document.createElement('span');
-                span.className = 'tts-word-highlight';
-                // Add inline styles - bold and zoom only, no background
-                span.style.fontWeight = '900';
-                span.style.fontSize = '1.2em';
-                span.style.transform = 'scale(1.15)';
-                span.style.display = 'inline-block';
-                span.style.transition = 'all 0.2s ease';
-                span.textContent = matchedWord;
-
-                const fragment = document.createDocumentFragment();
-                if (before) fragment.appendChild(document.createTextNode(before));
-                fragment.appendChild(span);
-                if (after) fragment.appendChild(document.createTextNode(after));
-
-                textNode.parentNode?.replaceChild(fragment, textNode);
-                console.log('Applied highlight to word:', matchedWord); // Debug log
-                break;
+              let node;
+              while (node = walker.nextNode()) {
+                if (node.textContent && node.textContent.trim().length > 0) {
+                  textNodes.push(node as Text);
+                }
               }
+
+              // Search for the word in text nodes
+              for (const textNode of textNodes) {
+                const text = textNode.textContent || '';
+                const regex = new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+                const match = text.match(regex);
+
+                if (match && match.index !== undefined) {
+                  console.log('Found word in text:', text.substring(0, 50)); // Debug log
+                  const matchIndex = match.index;
+                  const matchedWord = match[0];
+
+                  const before = text.substring(0, matchIndex);
+                  const after = text.substring(matchIndex + matchedWord.length);
+
+                  const span = document.createElement('span');
+                  span.className = 'tts-word-highlight';
+                  // Add inline styles - bold and zoom only, no background
+                  span.style.fontWeight = '900';
+                  span.style.fontSize = '1.2em';
+                  span.style.transform = 'scale(1.15)';
+                  span.style.display = 'inline-block';
+                  span.style.transition = 'all 0.2s ease';
+                  span.textContent = matchedWord;
+
+                  const fragment = document.createDocumentFragment();
+                  if (before) fragment.appendChild(document.createTextNode(before));
+                  fragment.appendChild(span);
+                  if (after) fragment.appendChild(document.createTextNode(after));
+
+                  textNode.parentNode?.replaceChild(fragment, textNode);
+                  console.log('Applied highlight to word:', matchedWord); // Debug log
+                  break;
+                }
+              }
+            } else {
+              console.log('Article content not found'); // Debug log
             }
-          } else {
-            console.log('Article content not found'); // Debug log
           }
         }
-      }
-    };
+      };
 
-    newUtterance.onstart = () => {
-      setIsReading(true);
-      setIsPaused(false);
-      setCurrentWordIndex(0);
-    };
+      newUtterance.onstart = () => {
+        console.log('TTS started successfully');
+        setIsReading(true);
+        setIsPaused(false);
+        setCurrentWordIndex(0);
+      };
 
-    newUtterance.onend = () => {
-      setIsReading(false);
-      setIsPaused(false);
-      setHighlightedText('');
-      setCurrentWordIndex(0);
-      // Clean up bold highlighting
-      document.querySelectorAll('.tts-word-highlight').forEach(el => {
-        const text = el.textContent || '';
-        const textNode = document.createTextNode(text);
-        el.parentNode?.replaceChild(textNode, el);
-      });
-    };
+      newUtterance.onend = () => {
+        console.log('TTS ended');
+        setIsReading(false);
+        setIsPaused(false);
+        setHighlightedText('');
+        setCurrentWordIndex(0);
+        // Clean up bold highlighting
+        document.querySelectorAll('.tts-word-highlight').forEach(el => {
+          const text = el.textContent || '';
+          const textNode = document.createTextNode(text);
+          el.parentNode?.replaceChild(textNode, el);
+        });
+      };
 
-    newUtterance.onerror = () => {
-      setIsReading(false);
-      setIsPaused(false);
-      setHighlightedText('');
-      setCurrentWordIndex(0);
-      // Clean up bold highlighting
-      document.querySelectorAll('.tts-word-highlight').forEach(el => {
-        const text = el.textContent || '';
-        const textNode = document.createTextNode(text);
-        el.parentNode?.replaceChild(textNode, el);
-      });
-    };
+      newUtterance.onerror = (event) => {
+        console.error('TTS error:', event.error, event);
+        setIsReading(false);
+        setIsPaused(false);
+        setHighlightedText('');
+        setCurrentWordIndex(0);
+        // Clean up bold highlighting
+        document.querySelectorAll('.tts-word-highlight').forEach(el => {
+          const text = el.textContent || '';
+          const textNode = document.createTextNode(text);
+          el.parentNode?.replaceChild(textNode, el);
+        });
 
-    setUtterance(newUtterance);
-    window.speechSynthesis.speak(newUtterance);
+        // Show user-friendly error message
+        if (event.error === 'not-allowed' || event.error === 'canceled') {
+          alert('Speech was interrupted. Please try again.');
+        }
+      };
+
+      setUtterance(newUtterance);
+
+      // Android-specific: Small delay before speaking to ensure proper initialization
+      setTimeout(() => {
+        console.log('Attempting to speak...');
+        window.speechSynthesis.speak(newUtterance);
+
+        // Android fallback: Check if speaking started
+        setTimeout(() => {
+          if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+            console.log('Speech did not start, retrying...');
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(newUtterance);
+          }
+        }, 100);
+      }, 50);
+
+    } catch (error) {
+      console.error('Error initializing TTS:', error);
+      alert('Failed to initialize text-to-speech. Please try again.');
+    }
   };
 
   const handlePause = () => {
