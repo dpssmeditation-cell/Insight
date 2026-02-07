@@ -495,33 +495,71 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
 
               {/* Advanced Rich Text Content Editors */}
               {activeTab === 'article' && (
-                <section className="space-y-10">
-                  <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">2. Article Content (Rich Text)</h3>
+                <>
+                  <section className="space-y-6">
+                    <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">2. Article Excerpts</h3>
+                    <div className="grid grid-cols-1 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">English Excerpt</label>
+                        <textarea
+                          className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all resize-none"
+                          rows={3}
+                          placeholder="Brief summary of the article (shown on article cards)"
+                          value={currentItem.excerpt || ''}
+                          onChange={e => setCurrentItem({ ...currentItem, excerpt: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Chinese Excerpt (摘要)</label>
+                        <textarea
+                          className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all chinese-text resize-none"
+                          rows={3}
+                          placeholder="文章简介"
+                          value={currentItem.excerptZh || ''}
+                          onChange={e => setCurrentItem({ ...currentItem, excerptZh: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-slate-400">Khmer Excerpt (សេចក្ដីសង្ខេប)</label>
+                        <textarea
+                          className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-900 focus:bg-white transition-all khmer-text font-serif resize-none"
+                          rows={3}
+                          placeholder="សេចក្ដីសង្ខេបអត្ថបទ"
+                          value={currentItem.excerptKh || ''}
+                          onChange={e => setCurrentItem({ ...currentItem, excerptKh: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </section>
 
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
-                      <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">EN</span>
-                      English Body Content
-                    </label>
-                    <RichTextEditor value={currentItem.content || ''} onChange={val => setCurrentItem({ ...currentItem, content: val })} />
-                  </div>
+                  <section className="space-y-10">
+                    <h3 className="text-sm font-bold text-amber-900 uppercase tracking-widest border-b border-amber-100 pb-2">3. Article Content (Rich Text)</h3>
 
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
-                      <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">ZH</span>
-                      Chinese Body Content (中文正文)
-                    </label>
-                    <RichTextEditor lang="zh" value={currentItem.contentZh || ''} onChange={val => setCurrentItem({ ...currentItem, contentZh: val })} />
-                  </div>
+                    <div className="space-y-4">
+                      <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">EN</span>
+                        English Body Content
+                      </label>
+                      <RichTextEditor value={currentItem.content || ''} onChange={val => setCurrentItem({ ...currentItem, content: val })} />
+                    </div>
 
-                  <div className="space-y-4">
-                    <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
-                      <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">KH</span>
-                      Khmer Body Content (ខ្លឹមសារអត្ថបទខ្មែរ)
-                    </label>
-                    <RichTextEditor lang="kh" value={currentItem.contentKh || ''} onChange={val => setCurrentItem({ ...currentItem, contentKh: val })} />
-                  </div>
-                </section>
+                    <div className="space-y-4">
+                      <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">ZH</span>
+                        Chinese Body Content (中文正文)
+                      </label>
+                      <RichTextEditor lang="zh" value={currentItem.contentZh || ''} onChange={val => setCurrentItem({ ...currentItem, contentZh: val })} />
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="flex items-center gap-3 text-xs font-bold uppercase text-slate-500">
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center">KH</span>
+                        Khmer Body Content (ខ្លឹមសារអត្ថបទខ្មែរ)
+                      </label>
+                      <RichTextEditor lang="kh" value={currentItem.contentKh || ''} onChange={val => setCurrentItem({ ...currentItem, contentKh: val })} />
+                    </div>
+                  </section>
+                </>
               )}
 
               {/* Simple Metadata Group */}
