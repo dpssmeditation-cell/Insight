@@ -25,7 +25,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ selectedCategory, onSelect
   };
 
   return (
-    <div className="flex overflow-x-auto pb-1 gap-1 scrollbar-hide mask-fade-right">
+    <div className="flex overflow-x-auto pb-1 gap-1 scrollbar-hide mask-fade-right -webkit-overflow-scrolling-touch" style={{ WebkitOverflowScrolling: 'touch' }}>
       {CATEGORIES.map((category) => (
         <button
           key={category}
