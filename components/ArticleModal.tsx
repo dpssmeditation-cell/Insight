@@ -563,7 +563,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
 
 
             <div
-              className="ml-auto flex items-center gap-2 overflow-x-auto scrollbar-hide"
+              className="ml-auto flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide"
               style={{
                 WebkitOverflowScrolling: 'touch',
                 touchAction: 'pan-x',
