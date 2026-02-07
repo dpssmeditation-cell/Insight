@@ -561,11 +561,19 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
               </span>
             )}
 
-            <div className="ml-auto flex items-center gap-2">
+
+            <div
+              className="ml-auto flex items-center gap-2 overflow-x-auto scrollbar-hide"
+              style={{
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pan-x',
+                overscrollBehavior: 'contain'
+              }}
+            >
               <button
                 onClick={handlePlay}
                 disabled={isReading}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${isReading
+                className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all ${isReading
                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   : 'bg-amber-700 hover:bg-amber-800 text-white shadow-sm hover:shadow-md'
                   } ${language === 'zh' ? 'chinese-text' : ''}`}
@@ -580,7 +588,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
               <button
                 onClick={handlePause}
                 disabled={!isReading}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading
+                className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading
                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   : 'bg-slate-600 hover:bg-slate-700 text-white shadow-sm hover:shadow-md'
                   } ${language === 'zh' ? 'chinese-text' : ''}`}
@@ -595,7 +603,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
               <button
                 onClick={handleStop}
                 disabled={!isReading && !isPaused}
-                className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading && !isPaused
+                className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium text-sm transition-all ${!isReading && !isPaused
                   ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                   : 'bg-red-600 hover:bg-red-700 text-white shadow-sm hover:shadow-md'
                   } ${language === 'zh' ? 'chinese-text' : ''}`}
