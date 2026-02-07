@@ -1,0 +1,43 @@
+User-agent: *
+Disallow: /trackback/
+Disallow: /xmlrpc.php
+Disallow: /feed/
+Disallow: /*/feed/*
+Disallow: /*/*?s=*
+
+# protect my site from HTTrack or other software's ripping?
+User-agent: AhrefsBot
+User-agent: Baiduspider
+User-agent: EasouSpider
+User-agent: Ezooms
+User-agent: YandexBot
+User-agent: MJ12bot
+User-agent: SiteSucker
+User-agent: HTTrack
+User-agent: HTTrack Website Copier
+User-agent: Teleport
+User-agent: TeleportPro
+User-agent: EmailCollector
+User-agent: EmailSiphon
+User-agent: WebBandit
+User-agent: WebZIP
+User-agent: WebReaper
+User-agent: WebStripper
+User-agent: Web Downloader
+User-agent: WebCopier
+User-agent: Offline Explorer Pro
+User-agent: Offline Commander
+User-agent: Leech
+User-agent: WebSnake
+User-agent: BlackWidow
+User-agent: HTTP Weazel
+User-agent: Barkrowler/0.9
+User-agent: Barkrowler
+User-agent: Nutch
+Disallow: /
+
+User-agent: MJ12bot
+Crawl-delay: 1
+
+User-agent: pinerest
+Crawl-delay: 1
