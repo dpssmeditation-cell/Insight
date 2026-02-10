@@ -92,17 +92,18 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({ language, articles, 
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        {displayedArticles.map(article => (
-          <ArticleCard
-            key={article.id}
-            article={article}
-            language={language}
-            onClick={(article) => {
-              firebaseService.incrementView('articles', article.id);
-              setSelectedArticle(article);
-              if (onArticleClick) onArticleClick(article);
-            }}
-          />
+        {displayedArticles.map((article, index) => (
+          <div key={article.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'both' }}>
+            <ArticleCard
+              article={article}
+              language={language}
+              onClick={(article) => {
+                firebaseService.incrementView('articles', article.id);
+                setSelectedArticle(article);
+                if (onArticleClick) onArticleClick(article);
+              }}
+            />
+          </div>
         ))}
         {filteredArticles.length === 0 && (
           <div className="col-span-full py-20 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">

@@ -76,17 +76,18 @@ export const MultimediaPage: React.FC<MultimediaPageProps> = ({ language, videos
                 ))}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 gap-y-10">
-                {visibleVideos.map(video => (
-                    <VideoCard
-                        key={video.id}
-                        video={video}
-                        language={language}
-                        onPlay={(video) => {
-                            firebaseService.incrementView('videos', video.id);
-                            setPlayingVideo(video);
-                            if (onVideoPlay) onVideoPlay(video);
-                        }}
-                    />
+                {visibleVideos.map((video, index) => (
+                    <div key={video.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'both' }}>
+                        <VideoCard
+                            video={video}
+                            language={language}
+                            onPlay={(video) => {
+                                firebaseService.incrementView('videos', video.id);
+                                setPlayingVideo(video);
+                                if (onVideoPlay) onVideoPlay(video);
+                            }}
+                        />
+                    </div>
                 ))}
             </div>
 

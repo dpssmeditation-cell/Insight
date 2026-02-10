@@ -217,54 +217,60 @@ const App: React.FC = () => {
     switch (currentView) {
       case 'admin':
         return (
-          <AdminPage
-            books={books}
-            audios={audios}
-            videos={videos}
-            articles={articles}
-            artists={artists}
-            language={language}
-            onSave={handleSaveItem}
-            onDelete={handleDeleteItem}
-            onSeed={handleSeed}
-          />
+          <div key="admin" className="animate-fade-in">
+            <AdminPage
+              books={books}
+              audios={audios}
+              videos={videos}
+              articles={articles}
+              artists={artists}
+              language={language}
+              onSave={handleSaveItem}
+              onDelete={handleDeleteItem}
+              onSeed={handleSeed}
+            />
+          </div>
         );
       case 'profile':
         return currentUser ? (
-          <ProfilePage
-            user={currentUser}
-            onUpdateUser={handleUpdateUser}
-            language={language}
-          />
+          <div key="profile" className="animate-fade-in">
+            <ProfilePage
+              user={currentUser}
+              onUpdateUser={handleUpdateUser}
+              language={language}
+            />
+          </div>
         ) : (
-          <div className="text-center py-20 dark:text-slate-300">Please log in to view profile.</div>
+          <div className="text-center py-20 dark:text-slate-300 animate-fade-in">Please log in to view profile.</div>
         );
       case 'my-library':
         return currentUser ? (
-          <MyLibraryPage
-            user={currentUser}
-            books={books}
-            audios={audios}
-            videos={videos}
-            articles={articles}
-            language={language}
-          />
+          <div key="my-library" className="animate-fade-in">
+            <MyLibraryPage
+              user={currentUser}
+              books={books}
+              audios={audios}
+              videos={videos}
+              articles={articles}
+              language={language}
+            />
+          </div>
         ) : (
-          <div className="text-center py-20 dark:text-slate-300">Please log in to view library.</div>
+          <div className="text-center py-20 dark:text-slate-300 animate-fade-in">Please log in to view library.</div>
         );
       case 'articles':
-        return <ArticlesPage language={language} articles={articles} initialId={new URLSearchParams(window.location.search).get('id')} />;
+        return <div key="articles" className="animate-fade-in"><ArticlesPage language={language} articles={articles} initialId={new URLSearchParams(window.location.search).get('id')} /></div>;
       case 'multimedia':
-        return <MultimediaPage language={language} videos={videos} initialId={new URLSearchParams(window.location.search).get('id')} />;
+        return <div key="multimedia" className="animate-fade-in"><MultimediaPage language={language} videos={videos} initialId={new URLSearchParams(window.location.search).get('id')} /></div>;
       case 'about':
-        return <AboutPage language={language} onRead={handleReadBook} books={books} audios={audios} videos={videos} articles={articles} />;
+        return <div key="about" className="animate-fade-in"><AboutPage language={language} onRead={handleReadBook} books={books} audios={audios} videos={videos} articles={articles} /></div>;
       case 'audio':
-        return <AudioPage language={language} audios={audios} initialId={new URLSearchParams(window.location.search).get('id')} />;
+        return <div key="audio" className="animate-fade-in"><AudioPage language={language} audios={audios} initialId={new URLSearchParams(window.location.search).get('id')} /></div>;
       case 'books':
       default:
         return (
-          <>
-            <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8 animate-fade-in">
+          <div key="books" className="animate-fade-in">
+            <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
               <div>
                 <h1 className={`text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-3 font-serif tracking-tight ${language === 'kh' ? 'khmer-text' : (language === 'zh' ? 'chinese-text' : '')}`}>{t.library}</h1>
                 <p className={`text-slate-500 dark:text-slate-400 font-serif italic text-lg max-w-2xl ${language === 'kh' ? 'khmer-text' : (language === 'zh' ? 'chinese-text' : '')}`}>
@@ -312,7 +318,7 @@ const App: React.FC = () => {
               totalPages={totalPages}
               onPageChange={handlePageChange}
             />
-          </>
+          </div>
         );
     }
   };
