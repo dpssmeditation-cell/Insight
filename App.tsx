@@ -20,6 +20,9 @@ import { Book, Category, Language, ViewState, Audio, Video, User, Article, Artis
 import { UI_STRINGS, BOOKS, ARTICLES, AUDIOS, VIDEOS, ARTIST_PROFILES } from './constants';
 import { authService } from './services/authService';
 import { firebaseService } from './services/firebaseService';
+import { SearchBar } from './components/SearchBar';
+import { AdvancedFilters } from './components/AdvancedSearchModal';
+import { evaluateQuery } from './utils/searchUtils';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -30,6 +33,7 @@ const App: React.FC = () => {
   const [readingBook, setReadingBook] = useState<Book | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [language, setLanguage] = useState<Language>('en');
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -146,18 +150,42 @@ const App: React.FC = () => {
   };
 
   const filteredBooks = books.filter((book) => {
+    // 1. Matches Category (Top level filter)
     const matchesCategory = selectedCategory === 'All' || book.category === selectedCategory;
-    const matchesSearch =
-      book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (book.titleZh && book.titleZh.includes(searchQuery)) ||
-      (book.titleKh && book.titleKh.includes(searchQuery)) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+
+    // 2. Matches Advanced Filters (if active)
+    let matchesAdvanced = true;
+    if (Object.keys(advancedFilters).length > 0) {
+      if (advancedFilters.category && advancedFilters.category !== 'All' && book.category !== advancedFilters.category) {
+        matchesAdvanced = false;
+      }
+      if (advancedFilters.author && !book.author.toLowerCase().includes(advancedFilters.author.toLowerCase()) && !book.authorZh.includes(advancedFilters.author)) {
+        matchesAdvanced = false;
+      }
+      if (advancedFilters.yearFrom && parseInt(book.year) < parseInt(advancedFilters.yearFrom)) {
+        matchesAdvanced = false;
+      }
+      if (advancedFilters.yearTo && parseInt(book.year) > parseInt(advancedFilters.yearTo)) {
+        matchesAdvanced = false;
+      }
+      if (advancedFilters.query && !evaluateQuery(book, advancedFilters.query, ['title', 'titleZh', 'titleKh', 'author', 'authorZh', 'description', 'descriptionZh'])) {
+        matchesAdvanced = false;
+      }
+    }
+
+    // 3. Matches Simple Search (if no advanced query)
+    // If advanced query exists, it takes precedence for text matching
+    let matchesSearch = true;
+    if (!advancedFilters.query && searchQuery) {
+      matchesSearch = evaluateQuery(book, searchQuery, ['title', 'titleZh', 'titleKh', 'author', 'authorZh']);
+    }
+
+    return matchesCategory && matchesAdvanced && matchesSearch;
   });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, searchQuery, language]);
+  }, [selectedCategory, searchQuery, advancedFilters, language]);
 
   const totalPages = Math.ceil(filteredBooks.length / ITEMS_PER_PAGE);
   const displayedBooks = filteredBooks.slice(
@@ -290,17 +318,20 @@ const App: React.FC = () => {
                 language={language}
               />
 
-              <div className="relative w-full md:w-72 group">
-                <input
-                  type="text"
-                  placeholder={t.searchPlaceholder}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-900/20 dark:focus:ring-amber-500/20 focus:border-amber-900 dark:focus:border-amber-500 text-sm transition-all shadow-sm group-hover:border-slate-300 dark:text-white dark:placeholder-slate-500 ${language === 'kh' ? 'khmer-text' : (language === 'zh' ? 'chinese-text' : '')}`}
+              <div className="w-full md:w-auto">
+                <SearchBar
+                  language={language}
+                  type="books"
+                  onSearch={(q) => {
+                    setSearchQuery(q);
+                    setAdvancedFilters({}); // Clear advanced filters on simple search
+                  }}
+                  onAdvancedSearch={(filters) => {
+                    setAdvancedFilters(filters);
+                    setSearchQuery(''); // Clear simple search on advanced
+                    if (filters.category) setSelectedCategory(filters.category as any);
+                  }}
                 />
-                <svg className="w-5 h-5 text-slate-400 dark:text-slate-500 absolute left-4 top-2.5 transition-colors group-hover:text-amber-800 dark:group-hover:text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
               </div>
             </div>
 

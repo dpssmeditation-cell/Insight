@@ -5,6 +5,9 @@ import { AudioPlayerModal } from './AudioPlayerModal';
 import { Pagination } from './Pagination';
 import { Language, Audio } from '../types';
 import { firebaseService } from '../services/firebaseService';
+import { SearchBar } from './SearchBar';
+import { AdvancedFilters } from './AdvancedSearchModal';
+import { evaluateQuery } from '../utils/searchUtils';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -19,6 +22,8 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios, onAudioP
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [playingAudio, setPlayingAudio] = useState<Audio | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({});
     const t = UI_STRINGS[language];
 
     // Sync state to URL and handle initial ID
@@ -43,9 +48,41 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios, onAudioP
     // Reset pagination when category changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedCategory]);
+    }, [selectedCategory, searchQuery, advancedFilters]);
 
-    const filteredAudios = audios.filter(a => selectedCategory === 'All' || a.category === selectedCategory);
+    const filteredAudios = audios.filter(a => {
+        // 1. Matches Category
+        const matchesCategory = selectedCategory === 'All' || a.category === selectedCategory;
+
+        // 2. Matches Advanced Filters
+        let matchesAdvanced = true;
+        if (Object.keys(advancedFilters).length > 0) {
+            if (advancedFilters.category && advancedFilters.category !== 'All' && a.category !== advancedFilters.category) {
+                matchesAdvanced = false;
+            }
+            if (advancedFilters.author && !a.artist.toLowerCase().includes(advancedFilters.author.toLowerCase()) && !a.artistZh.includes(advancedFilters.author)) {
+                matchesAdvanced = false;
+            }
+            const year = a.date ? parseInt(a.date.split('-')[0]) : 0;
+            if (advancedFilters.yearFrom && year < parseInt(advancedFilters.yearFrom)) {
+                matchesAdvanced = false;
+            }
+            if (advancedFilters.yearTo && year > parseInt(advancedFilters.yearTo)) {
+                matchesAdvanced = false;
+            }
+            if (advancedFilters.query && !evaluateQuery(a, advancedFilters.query, ['title', 'titleZh', 'artist', 'artistZh'])) {
+                matchesAdvanced = false;
+            }
+        }
+
+        // 3. Simple Search
+        let matchesSearch = true;
+        if (!advancedFilters.query && searchQuery) {
+            matchesSearch = evaluateQuery(a, searchQuery, ['title', 'titleZh', 'artist', 'artistZh']);
+        }
+
+        return matchesCategory && matchesAdvanced && matchesSearch;
+    });
 
     // Pagination Logic
     const totalPages = Math.ceil(filteredAudios.length / ITEMS_PER_PAGE);
@@ -68,9 +105,17 @@ export const AudioPage: React.FC<AudioPageProps> = ({ language, audios, onAudioP
                         {language === 'zh' ? '沉浸在五千年文明的旋律与圣贤智慧中。' : 'Immerse yourself in the melodies of the Middle Kingdom and the wisdom of the ages.'}
                     </p>
                 </div>
-                <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-full">
-                    <svg className="w-5 h-5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
-                    <span>{audios.length} {t.totalTracks}</span>
+                <div className="flex flex-col md:items-end gap-3">
+                    <SearchBar
+                        language={language}
+                        type="audio"
+                        onSearch={(q) => { setSearchQuery(q); setAdvancedFilters({}); }}
+                        onAdvancedSearch={(filters) => { setAdvancedFilters(filters); setSearchQuery(''); if (filters.category) setSelectedCategory(filters.category); }}
+                    />
+                    <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-full w-fit">
+                        <svg className="w-5 h-5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>
+                        <span>{audios.length} {t.totalTracks}</span>
+                    </div>
                 </div>
             </div>
 

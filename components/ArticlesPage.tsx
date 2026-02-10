@@ -5,6 +5,9 @@ import { ArticleCard } from './ArticleCard';
 import { Pagination } from './Pagination';
 import { ArticleModal } from './ArticleModal';
 import { firebaseService } from '../services/firebaseService';
+import { SearchBar } from './SearchBar';
+import { AdvancedFilters } from './AdvancedSearchModal';
+import { evaluateQuery } from '../utils/searchUtils';
 
 interface ArticlesPageProps {
   language: Language;
@@ -19,9 +22,44 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({ language, articles, 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({});
   const t = UI_STRINGS[language];
 
-  const filteredArticles = articles.filter(a => selectedCategory === 'All' || a.category === selectedCategory);
+  const filteredArticles = articles.filter(a => {
+    // 1. Matches Category
+    const matchesCategory = selectedCategory === 'All' || a.category === selectedCategory;
+
+    // 2. Matches Advanced Filters
+    let matchesAdvanced = true;
+    if (Object.keys(advancedFilters).length > 0) {
+      if (advancedFilters.category && advancedFilters.category !== 'All' && a.category !== advancedFilters.category) {
+        matchesAdvanced = false;
+      }
+      if (advancedFilters.author && !a.author.toLowerCase().includes(advancedFilters.author.toLowerCase()) && !a.authorZh.includes(advancedFilters.author)) {
+        matchesAdvanced = false;
+      }
+      // Check year from date string (YYYY-MM-DD)
+      const year = a.date ? parseInt(a.date.split('-')[0]) : 0;
+      if (advancedFilters.yearFrom && year < parseInt(advancedFilters.yearFrom)) {
+        matchesAdvanced = false;
+      }
+      if (advancedFilters.yearTo && year > parseInt(advancedFilters.yearTo)) {
+        matchesAdvanced = false;
+      }
+      if (advancedFilters.query && !evaluateQuery(a, advancedFilters.query, ['title', 'titleZh', 'author', 'authorZh', 'excerpt', 'excerptZh'])) {
+        matchesAdvanced = false;
+      }
+    }
+
+    // 3. Simple Search
+    let matchesSearch = true;
+    if (!advancedFilters.query && searchQuery) {
+      matchesSearch = evaluateQuery(a, searchQuery, ['title', 'titleZh', 'author', 'authorZh']);
+    }
+
+    return matchesCategory && matchesAdvanced && matchesSearch;
+  });
 
   // Sync state to URL and handle initial ID
   useEffect(() => {
@@ -49,10 +87,10 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({ language, articles, 
     currentPage * ARTICLES_PER_PAGE
   );
 
-  // Reset to first page when category changes
+  // Reset to first page when category/search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory]);
+  }, [selectedCategory, searchQuery, advancedFilters]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -70,9 +108,17 @@ export const ArticlesPage: React.FC<ArticlesPageProps> = ({ language, articles, 
             {language === 'zh' ? '深入浅出的文化见解、历史研究和当代反思。' : 'Deep insights into culture, historical research, and contemporary reflections.'}
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-full h-fit">
-          <svg className="w-5 h-5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
-          <span>{filteredArticles.length} {t.articles}</span>
+        <div className="flex flex-col md:items-end gap-3">
+          <SearchBar
+            language={language}
+            type="articles"
+            onSearch={(q) => { setSearchQuery(q); setAdvancedFilters({}); }}
+            onAdvancedSearch={(filters) => { setAdvancedFilters(filters); setSearchQuery(''); if (filters.category) setSelectedCategory(filters.category); }}
+          />
+          <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-full h-fit w-fit">
+            <svg className="w-5 h-5 text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+            <span>{filteredArticles.length} {t.articles}</span>
+          </div>
         </div>
       </div>
 
