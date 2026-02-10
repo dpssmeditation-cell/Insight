@@ -283,7 +283,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 sticky top-24 z-30 bg-[#f9fafb]/95 dark:bg-slate-900/95 backdrop-blur-md py-4 rounded-xl transition-all animate-fade-in">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 sticky top-24 z-30 glass py-4 rounded-xl transition-all animate-fade-in">
               <FilterBar
                 selectedCategory={selectedCategory}
                 onSelectCategory={setSelectedCategory}

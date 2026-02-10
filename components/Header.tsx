@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 sticky top-0 z-50 transition-all duration-300">
+    <header className="glass sticky top-0 z-50 transition-all duration-300">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         <div className="flex justify-between items-center h-20">
           <div
@@ -194,7 +194,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 absolute w-full left-0 shadow-xl animate-fade-in-down z-50">
+        <div className="md:hidden glass absolute w-full left-0 animate-fade-in-down z-50 border-t-0">
           <nav className="flex flex-col p-6 space-y-4">
             {navItems.map((item, idx) => (
               <button

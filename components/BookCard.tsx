@@ -95,7 +95,7 @@ export const BookCard: React.FC<BookCardProps> = ({ book, onClick, language }) =
 
         {/* Hover Action Overlay */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-95 group-hover:scale-100 pointer-events-none">
-          <span className="bg-white/95 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-black px-5 py-2.5 rounded-full shadow-2xl tracking-widest uppercase border dark:border-slate-700">
+          <span className="glass text-slate-900 dark:text-white text-xs font-black px-5 py-2.5 rounded-full shadow-2xl tracking-widest uppercase">
             {t.viewDetails}
           </span>
         </div>

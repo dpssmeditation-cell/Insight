@@ -47,6 +47,10 @@ h6,
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
+.glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg dark:bg-slate-900/70 dark:border-white/10 dark:shadow-black/50;
+}
+
 .dark ::-webkit-scrollbar {
     width: 10px;
 }

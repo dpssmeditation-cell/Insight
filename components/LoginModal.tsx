@@ -85,7 +85,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess,
   if (isResetSent && mode === 'forgot') {
     return (
       <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" />
+        <div className="absolute inset-0 glass transition-opacity" />
         <div className="relative bg-white rounded-[24px] shadow-2xl w-full max-w-[480px] overflow-hidden animate-fade-in-up p-10 text-center">
           <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -110,7 +110,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess,
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity animate-fade-in"
+        className="absolute inset-0 glass transition-opacity animate-fade-in"
       />
 
       <div className="relative bg-white rounded-[24px] shadow-2xl w-full max-w-[480px] overflow-hidden animate-fade-in-up">

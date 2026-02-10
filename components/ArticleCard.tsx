@@ -70,7 +70,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onClick, lang
 
   return (
     <div
-      className="group cursor-pointer bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+      className="group cursor-pointer glass rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full"
       onClick={() => onClick(article)}
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden">

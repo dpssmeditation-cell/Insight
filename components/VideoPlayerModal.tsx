@@ -47,14 +47,14 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ video, onClo
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-slate-900/90 backdrop-blur-md animate-fade-in"
+        className="absolute inset-0 glass animate-fade-in"
       />
 
       <div className="relative bg-[#0b0f19] rounded-[20px] shadow-2xl w-full max-w-[1000px] overflow-hidden animate-fade-in-up transform transition-all border border-slate-800/50">
         <div className="absolute top-6 right-6 z-50">
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full transition-all backdrop-blur-sm shadow-sm"
+            className="w-10 h-10 flex items-center justify-center glass hover:bg-white/20 text-white rounded-full transition-all shadow-sm"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

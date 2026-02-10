@@ -71,9 +71,9 @@ export const BookModal: React.FC<BookModalProps> = ({ book, onClose, language, o
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 bg-slate-900/70 dark:bg-black/80 backdrop-blur-sm transition-opacity duration-300" />
+      <div className="absolute inset-0 glass transition-opacity duration-300" />
       <div className="relative bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:h-[650px] animate-fade-in-up transform transition-all border dark:border-slate-800">
-        <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors shadow-sm"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+        <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 glass hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors shadow-sm"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
         <div className="w-full md:w-5/12 bg-slate-100 dark:bg-slate-800 relative overflow-hidden group">
           <img src={book.coverUrl} alt={getLocalizedTitle()} className="w-full h-48 md:h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden" />

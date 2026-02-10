@@ -35,7 +35,7 @@ export const AudioCard: React.FC<AudioCardProps> = ({ audio, language, onPlay })
         <img src={audio.coverUrl} alt={language === 'zh' ? audio.titleZh : audio.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors" />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-90 group-hover:scale-100 pointer-events-none">
-          <div className="w-14 h-14 bg-amber-900/90 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm border border-white/20"><svg className="w-6 h-6 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+          <div className="w-14 h-14 glass text-white rounded-full flex items-center justify-center shadow-lg"><svg className="w-6 h-6 translate-x-0.5 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
         </div>
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent pointer-events-none transition-opacity duration-300" />
         <div className="absolute bottom-0 left-0 right-0 p-3 flex justify-between items-end z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

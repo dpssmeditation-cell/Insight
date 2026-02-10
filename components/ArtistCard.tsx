@@ -19,7 +19,7 @@ export const ArtistCard: React.FC<{ artist: Artist, language: Language }> = ({ a
   };
 
   return (
-    <div className="group cursor-pointer flex flex-col bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <div className="group cursor-pointer flex flex-col glass rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <div className="relative aspect-[3/4] w-full overflow-hidden mb-4 rounded-sm bg-slate-100">
         <img src={artist.imageUrl} alt={language === 'zh' ? artist.nameZh : artist.name} className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 filter grayscale hover:grayscale-0" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

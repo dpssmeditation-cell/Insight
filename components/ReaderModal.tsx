@@ -38,7 +38,7 @@ export const ReaderModal: React.FC<ReaderModalProps> = ({ book, onClose, languag
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-0 sm:p-4 lg:p-8">
             {/* Backdrop - lighter opacity to show context behind (Popup effect) */}
             <div
-                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm animate-fade-in"
+                className="absolute inset-0 glass animate-fade-in"
             ></div>
 
             {/* Modal Container - Window style */}

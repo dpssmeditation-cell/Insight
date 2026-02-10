@@ -555,7 +555,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
       <div
-        className="absolute inset-0 bg-slate-900/90 backdrop-blur-md animate-fade-in"
+        className="absolute inset-0 glass animate-fade-in"
       />
 
       <div className="relative w-full max-w-4xl max-h-[95vh] animate-fade-in-up flex flex-col bg-white rounded-2xl shadow-2xl overflow-hidden">
@@ -582,7 +582,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
 
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 z-50 p-2 bg-white/20 hover:bg-white/40 text-white rounded-full backdrop-blur-md transition-all border border-white/20"
+              className="absolute top-6 right-6 z-50 p-2 glass hover:bg-white/40 text-white rounded-full transition-all"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -703,7 +703,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, la
 
             {/* TTS Controls */}
             {/* TTS Controls */}
-            <div className="sticky top-6 z-40 mb-6 flex items-center gap-4 p-4 bg-amber-50/95 backdrop-blur border border-amber-200 rounded-lg shadow-sm hover:shadow-md transition-all">
+            <div className="sticky top-6 z-40 mb-6 flex items-center gap-4 p-4 glass rounded-lg transition-all">
               {readProgress > 5 && (
                 <div className="flex items-center gap-2 text-amber-700 font-medium animate-fade-in border-r border-amber-200 pr-4 mr-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
