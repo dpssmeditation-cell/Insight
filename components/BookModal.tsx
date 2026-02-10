@@ -8,10 +8,11 @@ interface BookModalProps {
   onClose: () => void;
   language: Language;
   onRead: (book: Book) => void;
+  initialChapterId?: string;
 }
 
-export const BookModal: React.FC<BookModalProps> = ({ book, onClose, language, onRead }) => {
-  const [activeTab, setActiveTab] = useState<'details' | 'ai'>('details');
+export const BookModal: React.FC<BookModalProps> = ({ book, onClose, language, onRead, initialChapterId }) => {
+  const [activeTab, setActiveTab] = useState<'details' | 'chapters' | 'ai'>(initialChapterId ? 'chapters' : 'details');
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,6 +83,7 @@ export const BookModal: React.FC<BookModalProps> = ({ book, onClose, language, o
         <div className="w-full md:w-7/12 flex flex-col bg-white dark:bg-slate-900">
           <div className="flex border-b border-slate-100 dark:border-slate-800 px-6 pt-4 bg-white dark:bg-slate-900">
             <button onClick={() => setActiveTab('details')} className={`pb-3 px-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${activeTab === 'details' ? 'text-amber-900 dark:text-amber-500 border-amber-900 dark:border-amber-500' : 'text-slate-400 border-transparent hover:text-slate-600 dark:hover:text-slate-300'}`}>{t.bookDetails}</button>
+            <button onClick={() => setActiveTab('chapters')} className={`pb-3 px-4 text-sm font-semibold tracking-wide transition-all border-b-2 ${activeTab === 'chapters' ? 'text-amber-900 dark:text-amber-500 border-amber-900 dark:border-amber-500' : 'text-slate-400 border-transparent hover:text-slate-600 dark:hover:text-slate-300'}`}>{language === 'zh' ? '章节' : (language === 'kh' ? 'ជំពូក' : 'Chapters')}</button>
             <button onClick={() => setActiveTab('ai')} className={`pb-3 px-4 text-sm font-semibold tracking-wide transition-all border-b-2 flex items-center gap-2 ${activeTab === 'ai' ? 'text-amber-900 dark:text-amber-500 border-amber-900 dark:border-amber-500' : 'text-slate-400 border-transparent hover:text-slate-600 dark:hover:text-slate-300'}`}><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>{t.aiLibrarian}</button>
           </div>
           <div className="flex-grow overflow-y-auto p-6 md:p-8 custom-scrollbar" ref={scrollRef}>
@@ -188,6 +190,44 @@ export const BookModal: React.FC<BookModalProps> = ({ book, onClose, language, o
                 <div className="pt-6 mt-auto">
                   <button onClick={() => onRead(book)} className="w-full bg-amber-900 dark:bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-white py-3.5 rounded-lg font-bold tracking-wide transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 transform active:scale-95"><span>{t.readOnline}</span><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg></button>
                 </div>
+              </div>
+            ) : activeTab === 'chapters' ? (
+              <div className="animate-fade-in space-y-4">
+                <h3 className="font-serif font-bold text-slate-900 dark:text-white text-lg mb-4">{language === 'zh' ? '章节列表' : (language === 'kh' ? 'បញ្ជីជំពូក' : 'Chapters List')}</h3>
+                {book.chapters && book.chapters.length > 0 ? (
+                  <div className="grid gap-3">
+                    {book.chapters.map((chapter) => (
+                      <div
+                        key={chapter.id}
+                        id={`chapter-${chapter.id}`}
+                        className={`p-4 rounded-lg border transition-all flex items-center justify-between group ${initialChapterId === chapter.id ? 'bg-amber-50 border-amber-200 ring-2 ring-amber-500/20 dark:bg-amber-900/20 dark:border-amber-700' : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 hover:border-amber-200 dark:hover:border-amber-700'}`}
+                      >
+                        <div>
+                          <h4 className="font-medium text-slate-800 dark:text-slate-200">{chapter.title}</h4>
+                          <span className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider">{language === 'zh' ? '第' : 'Page'} {chapter.page} {language === 'zh' ? '页' : ''}</span>
+                        </div>
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => {
+                              const url = `${window.location.origin}/?book=${book.id}&chapter=${chapter.id}`;
+                              navigator.clipboard.writeText(url).then(() => {
+                                alert(language === 'zh' ? '链接已复制' : 'Link copied!');
+                              });
+                            }}
+                            className="p-2 text-slate-400 hover:text-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-full transition-colors"
+                            title="Share Chapter"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-10 text-slate-400 dark:text-slate-500 italic">
+                    {language === 'zh' ? '暂无章节信息' : (language === 'kh' ? 'មិនមានព័ត៌មានជំពូក' : 'No chapter information available')}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex flex-col h-full animate-fade-in">

@@ -55,7 +55,13 @@ export const BOOKS: Book[] = [
     pages: 350,
     views: 12500,
     fileSize: '4.5 MB',
-    pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+    pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    chapters: [
+      { id: 'ch-1', title: 'Chapter 1: Learning', page: 1 },
+      { id: 'ch-2', title: 'Chapter 2: Governance', page: 15 },
+      { id: 'ch-3', title: 'Chapter 3: Rites', page: 34 },
+      { id: 'ch-4', title: 'Chapter 4: Virtue', page: 52 }
+    ]
   },
   {
     id: 'book-analects-lau',
@@ -91,7 +97,13 @@ export const BOOKS: Book[] = [
     pages: 81,
     views: 9800,
     fileSize: '2.1 MB',
-    pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+    pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    chapters: [
+      { id: 'ch-1', title: 'Chapter 1: The Tao', page: 1 },
+      { id: 'ch-2', title: 'Chapter 2: Being', page: 3 },
+      { id: 'ch-3', title: 'Chapter 3: Action', page: 5 },
+      { id: 'ch-81', title: 'Chapter 81: True Words', page: 81 }
+    ]
   },
   {
     id: 'book-art-of-war',

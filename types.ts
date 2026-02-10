@@ -1,6 +1,12 @@
 
 export type Category = 'All' | 'History' | 'Philosophy' | 'Culture' | 'Arts' | 'Biography' | 'Buddhism' | 'Dhamma Talks';
 
+export interface Chapter {
+  id: string;
+  title: string;
+  page: number; // For PDF page reference
+}
+
 export interface Book {
   id: string;
   title: string;
@@ -22,6 +28,7 @@ export interface Book {
   views?: number;
   pdfUrl?: string;
   fileSize?: string;
+  chapters?: Chapter[];
   createdAt?: string;
 }
 

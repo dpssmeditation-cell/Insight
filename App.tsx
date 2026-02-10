@@ -198,6 +198,16 @@ const App: React.FC = () => {
     const params = new URLSearchParams(window.location.search);
     const view = params.get('v') as ViewState;
     const id = params.get('id');
+    const bookId = params.get('book'); // Legacy support or direct book link
+    const chapterId = params.get('chapter');
+
+    if (bookId && books.length > 0) {
+      const book = books.find(b => b.id === bookId);
+      if (book) {
+        setSelectedBook(book);
+        // Logic to handle chapter scrolling if needed inside BookModal is passed via props
+      }
+    }
 
     if (view && ['books', 'articles', 'multimedia', 'about', 'audio', 'admin', 'profile', 'my-library'].includes(view)) {
       setCurrentView(view);
@@ -434,9 +444,15 @@ const App: React.FC = () => {
       {selectedBook && (
         <BookModal
           book={selectedBook}
-          onClose={() => setSelectedBook(null)}
+          onClose={() => {
+            setSelectedBook(null);
+            // Clear URL params
+            const newUrl = window.location.pathname;
+            window.history.pushState({}, '', newUrl);
+          }}
           language={language}
           onRead={handleReadBook}
+          initialChapterId={new URLSearchParams(window.location.search).get('chapter') || undefined}
         />
       )}
 
