@@ -251,9 +251,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
   };
 
   const handleCreate = () => {
-    setCurrentItem({
+    const baseItem: any = {
       id: '', title: '', titleZh: '', titleKh: '',
-      category: 'History',
+      category: activeTab === 'video' ? VIDEO_CATEGORIES[1] : (activeTab === 'audio' ? AUDIO_CATEGORIES[1] : CATEGORIES[1]),
       // Contributors
       author: '', authorZh: '', authorKh: '',
       artist: '', artistZh: '', artistKh: '',
@@ -263,9 +263,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
       role: '', roleZh: '', roleKh: '',
       bio: '', bioZh: '',
       // Visuals
-      imageUrl: 'https://picsum.photos/800/450',
-      coverUrl: 'https://picsum.photos/300/400',
-      thumbnailUrl: 'https://picsum.photos/600/338',
+      imageUrl: '',
+      coverUrl: '',
+      thumbnailUrl: '',
       // Content
       content: '', contentZh: '', contentKh: '',
       excerpt: '', excerptZh: '', excerptKh: '',
@@ -279,7 +279,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
       pdfUrl: '', fileSize: '', pages: 0,
       audioUrl: '',
       videoUrl: ''
-    });
+    };
+
+    // Set specific image field based on tab to avoid cross-contamination
+    if (activeTab === 'article') {
+      baseItem.imageUrl = 'https://picsum.photos/800/450';
+    } else if (activeTab === 'video') {
+      baseItem.thumbnailUrl = 'https://picsum.photos/600/338';
+    } else if (activeTab === 'artist') {
+      baseItem.imageUrl = 'https://picsum.photos/400/400';
+    } else {
+      baseItem.coverUrl = 'https://picsum.photos/300/400';
+    }
+
+    setCurrentItem(baseItem);
     setIsEditing(true);
   };
 
@@ -367,7 +380,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ books, audios, videos, art
                   <td className="p-6">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-14 bg-slate-100 rounded flex-shrink-0 overflow-hidden shadow-sm">
-                        <img src={item.coverUrl || item.imageUrl || item.thumbnailUrl} className="w-full h-full object-cover" />
+                        <img
+                          src={
+                            (activeTab === 'article' ? (item.imageUrl || item.coverUrl || item.thumbnailUrl) :
+                              activeTab === 'video' ? (item.thumbnailUrl || item.imageUrl || item.coverUrl) :
+                                activeTab === 'artist' ? (item.imageUrl || item.coverUrl) :
+                                  (item.coverUrl || item.imageUrl || item.thumbnailUrl)) || 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=100&q=20'
+                          }
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=100&q=20';
+                          }}
+                        />
                       </div>
                       <span className="font-bold text-slate-800">{item.title || item.name}</span>
                     </div>
