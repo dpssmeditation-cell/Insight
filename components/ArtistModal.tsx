@@ -67,9 +67,12 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                         <div className="md:w-1/4 flex flex-col items-center">
                             <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-slate-700 shadow-xl mb-6 bg-slate-800">
                                 <img
-                                    src={artist.imageUrl}
+                                    src={artist.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name)}&background=5D3A1A&color=fff&size=512`}
                                     alt={artist.name}
                                     className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name)}&background=5D3A1A&color=fff&size=512`;
+                                    }}
                                 />
                             </div>
                             <div className="text-center">
@@ -129,7 +132,13 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                                             {artist.featuredAudio ? (
                                                 <div className="cursor-pointer group text-center" onClick={() => onAudioClick(artist.featuredAudio!)}>
                                                     <div className="relative w-24 h-24 mb-3 rounded-sm overflow-hidden border border-slate-600 shadow-md transition-transform group-hover:scale-105 mx-auto">
-                                                        <img src={artist.featuredAudio.coverUrl} className="w-full h-full object-cover" />
+                                                        <img
+                                                            src={artist.featuredAudio.coverUrl || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=100&q=20'}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=100&q=20';
+                                                            }}
+                                                        />
                                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                                                     </div>
                                                     <p className="text-xs font-medium text-slate-200 line-clamp-1 group-hover:text-amber-500 transition-colors">
@@ -148,7 +157,13 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                                             {artist.featuredBook ? (
                                                 <div className="cursor-pointer group text-center" onClick={() => onBookClick(artist.featuredBook!)}>
                                                     <div className="relative w-24 h-32 mb-3 rounded-sm overflow-hidden border border-slate-600 shadow-md transition-transform group-hover:scale-105 mx-auto">
-                                                        <img src={artist.featuredBook.coverUrl} className="w-full h-full object-cover" />
+                                                        <img
+                                                            src={artist.featuredBook.coverUrl || 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=100&q=20'}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=100&q=20';
+                                                            }}
+                                                        />
                                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                                                     </div>
                                                     <p className="text-xs font-medium text-slate-200 line-clamp-1 group-hover:text-amber-500 transition-colors">
@@ -167,7 +182,13 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                                             {artist.featuredVideo ? (
                                                 <div className="cursor-pointer group text-center" onClick={() => onVideoClick(artist.featuredVideo!)}>
                                                     <div className="relative w-28 h-18 mb-3 rounded-sm overflow-hidden border border-slate-600 shadow-md transition-transform group-hover:scale-105 mx-auto">
-                                                        <img src={artist.featuredVideo.thumbnailUrl} className="w-full h-full object-cover" />
+                                                        <img
+                                                            src={artist.featuredVideo.thumbnailUrl || 'https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&w=100&q=20'}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&w=100&q=20';
+                                                            }}
+                                                        />
                                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                                                     </div>
                                                     <p className="text-xs font-medium text-slate-200 line-clamp-1 group-hover:text-amber-500 transition-colors">
@@ -186,7 +207,13 @@ export const ArtistModal: React.FC<ArtistModalProps> = ({
                                             {artist.featuredArticle ? (
                                                 <div className="cursor-pointer group text-center" onClick={() => onArticleClick(artist.featuredArticle!)}>
                                                     <div className="relative w-28 h-18 mb-3 rounded-sm overflow-hidden border border-slate-600 shadow-md transition-transform group-hover:scale-105 mx-auto">
-                                                        <img src={artist.featuredArticle.imageUrl} className="w-full h-full object-cover" />
+                                                        <img
+                                                            src={artist.featuredArticle.imageUrl || 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=100&q=20'}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?auto=format&fit=crop&w=100&q=20';
+                                                            }}
+                                                        />
                                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                                                     </div>
                                                     <p className="text-xs font-medium text-slate-200 line-clamp-1 group-hover:text-amber-500 transition-colors">

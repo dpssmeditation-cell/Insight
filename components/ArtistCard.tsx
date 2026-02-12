@@ -21,7 +21,15 @@ export const ArtistCard: React.FC<{ artist: Artist, language: Language }> = ({ a
   return (
     <div className="group cursor-pointer flex flex-col glass rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <div className="relative aspect-[3/4] w-full overflow-hidden mb-4 rounded-sm bg-slate-100">
-        <img src={artist.imageUrl} alt={language === 'zh' ? artist.nameZh : artist.name} className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 filter grayscale hover:grayscale-0" />
+        <img
+          src={artist.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name)}&background=5D3A1A&color=fff&size=512`}
+          alt={language === 'zh' ? artist.nameZh : artist.name}
+          className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 filter grayscale hover:grayscale-0"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(artist.name)}&background=5D3A1A&color=fff&size=512`;
+            (e.target as HTMLImageElement).onerror = null; // Prevent infinite loop if avatar service is down
+          }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute bottom-0 left-0 right-0 p-3 flex justify-between items-end z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
