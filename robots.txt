@@ -41,3 +41,5 @@ Crawl-delay: 1
 
 User-agent: pinerest
 Crawl-delay: 1
+
+Sitemap: https://www.insightsharing.org/sitemap.xml
