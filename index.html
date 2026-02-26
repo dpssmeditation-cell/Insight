@@ -4,8 +4,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO: Primary Meta Tags -->
+  <title>Insight Sharing - Digital Library of Wisdom & Meditation</title>
+  <meta name="title" content="Insight Sharing - Digital Library of Wisdom & Meditation" />
+  <meta name="description" content="Insight Sharing is a free digital library offering books, articles, audio, and multimedia resources on meditation, mindfulness, and Buddhist teachings to support your spiritual journey." />
+  <meta name="keywords" content="meditation, mindfulness, Buddhist teachings, digital library, wisdom, Dhamma, books, audio, spiritual practice, insight meditation" />
+  <meta name="author" content="Insight Sharing" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.insightsharing.org/" />
+
+  <!-- SEO: Preconnects for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.google-analytics.com">
+
+  <!-- SEO: Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.insightsharing.org/" />
+  <meta property="og:title" content="Insight Sharing - Digital Library of Wisdom & Meditation" />
+  <meta property="og:description" content="A free digital library offering books, articles, audio, and multimedia resources on meditation, mindfulness, and Buddhist teachings." />
+  <meta property="og:image" content="https://www.insightsharing.org/logo.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="Insight Sharing" />
+
+  <!-- SEO: Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://www.insightsharing.org/" />
+  <meta name="twitter:title" content="Insight Sharing - Digital Library of Wisdom & Meditation" />
+  <meta name="twitter:description" content="A free digital library offering books, articles, audio, and multimedia resources on meditation, mindfulness, and Buddhist teachings." />
+  <meta name="twitter:image" content="https://www.insightsharing.org/logo.png" />
+
+  <!-- SEO: Structured Data - WebSite with SearchAction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Insight Sharing",
+    "url": "https://www.insightsharing.org/",
+    "description": "A free digital library offering books, articles, audio, and multimedia resources on meditation, mindfulness, and Buddhist teachings.",
+    "inLanguage": "en",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.insightsharing.org/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- SEO: Structured Data - Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Insight Sharing",
+    "url": "https://www.insightsharing.org/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.insightsharing.org/logo.png"
+    },
+    "description": "Insight Sharing provides free access to books, articles, audio, and multimedia resources on meditation, mindfulness, and Buddhist teachings.",
+    "sameAs": []
+  }
+  </script>
+
+  <!-- SEO: Structured Data - Library -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Library",
+    "name": "Insight Sharing Digital Library",
+    "url": "https://www.insightsharing.org/",
+    "description": "A free digital library for wisdom and meditation resources.",
+    "openingHours": "Mo-Su 00:00-23:59",
+    "hasMap": "https://www.insightsharing.org/"
+  }
+  </script>
+
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <title>Insight Sharing - Digital Library</title>
+
   <script>
     // Check for dark mode preference before page load
     if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -14,8 +96,7 @@
       document.documentElement.classList.remove('dark');
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link
     href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+Khmer:wght@400;700&family=Inter:wght@300;400;500;600&display=swap"
     rel="stylesheet">
